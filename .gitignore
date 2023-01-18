@@ -1,0 +1,11 @@
+node_modules
+__src
+__trash
+npm-debug.log
+yarn-error.log
+.DS_Store
+build
+.idea
+.vs
+*.orig
+.vscode/settings.json
