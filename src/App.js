@@ -15,9 +15,16 @@ function validateEmail(value) {
 function validatePassword(value) {
   if (!value) { return 'Password Required'; }
 }
-function validateYear(value) { }
-function validateMark(value) { }
-function validateModel(value) { }
+function validateYear(value) {
+  if (!value) {
+    return 'Укажите год выпуска';
+  }
+  else if (!/^(19|20)\d{2}$/i.test(value)) {
+    return "Неверно указан год выпуска";
+  }
+}
+function validateMark(value) { console.log(value); }
+function validateModel(value) { console.log(value); }
 function validateState(value) { }
 function validateMileage(value) { }
 function validateSellingMethod(value) { }
@@ -31,7 +38,11 @@ function App() {
 
     <div className="App">
       <Formik
-        initialValues={{ email: "", password: "", }}
+        initialValues={{
+          Year: "",
+          email: "",
+          password: "",
+        }}
         onSubmit={values => {
           console.log('submit', values);
         }}
@@ -47,6 +58,7 @@ function App() {
               name="Year"
               validate={validateYear}
             />
+            {errors.Year && touched.Year && <div className={styles.error}>{errors.Year}</div>}
             <br />
             <label className={classnames(styles.label, { [styles.errorLabel]: errors.Mark && touched.Mark })}>
               Марка
