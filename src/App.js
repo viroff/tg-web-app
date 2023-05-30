@@ -2,11 +2,15 @@
 import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
+import { getCountries, getCities } from './API/geoApi';
 import styles from './App.css';
 const tg = window.Telegram.WebApp;
 
 const App = () => {
   const [marks, setMarks] = useState([]);
+  const [conditions, setConditions] = useState([]);
+  const [sellingTypes, setSellingTypes] = useState([]);
+  const [countries, setCountries] = useState([]);
 
   const getYears = (gen) => {
     try {
@@ -102,6 +106,31 @@ const App = () => {
       .catch(error => console.log(error));
   }, []);
 
+  useEffect(() => {
+    setConditions([
+      { name: 'Хорошее', id: 0 },
+      { name: 'На ходу', id: 1 },
+      { name: 'Битый', id: 2 },
+      { name: 'Не на ходу', id: 3 },
+      { name: 'Тотал', id: 4 }]);
+  }, []);
+
+  useEffect(() => {
+    setSellingTypes([
+      { name: 'Простая продажа', id: 0 },
+      { name: 'Лом', id: 1 },
+      { name: 'По запчастям', id: 2 }]);
+  }, []);
+
+  useEffect(() => {
+    const getCountriesInternal = async () => {
+      const cs = await getCountries();
+      setCountries(safeGetData(cs));
+    };
+    getCountriesInternal();
+  }, []);
+
+
   // fill models
   const getModels = async (selectedMark) => {
     if (selectedMark === '') {
@@ -173,13 +202,14 @@ const App = () => {
     <div className='App'>
       <Formik
         initialValues={{
-          marks: marks,
           models: [],
           generations: [],
           configurations: [],
           modifications: [],
           years: [],
-
+          cities: [],
+          condition: '',
+          sellingType: '',
           year: '',
           mark: '',
           markText: '',
@@ -360,6 +390,76 @@ const App = () => {
                   <option key={option} value={option}>{option}</option>
                 ))}
               </Field>
+              <p>-------------</p>
+              <Field
+                id='condition'
+                name='condition'
+                as='select'
+                value={values.condition}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('condition', value);
+                }}
+              >
+                <option value=''>Укажите состояние</option>
+                {conditions.map(option => (
+                  <option key={'c_' + option.id} value={option.id}>{option.name}</option>
+                ))}
+              </Field>
+              <br />
+              <Field
+                id='sellingtype'
+                name='sellingtype'
+                as='select'
+                value={values.sellingType}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('sellingType', value);
+                }}
+              >
+                <option value=''>Укажите тип продажи</option>
+                {sellingTypes.map(option => (
+                  <option key={'st_' + option.id} value={option.id}>{option.name}</option>
+                ))}
+              </Field>
+              <p>---------------------------------------</p>
+              <br />
+              <Field
+                id='country'
+                name='country'
+                as='select'
+                value={values.country}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('country', value);
+                  const cities = await getCities(value);
+                  setFieldValue('cities', cities);
+                  setFieldValue('city', '');
+                }}
+              >
+                <option value=''>Страна продажи</option>
+                {countries.map(option => (
+                  <option key={'ctr_' + option.id} value={option.id}>{option.name}</option>
+                ))}
+              </Field>
+              <br />
+              <Field
+                id='city'
+                name='city'
+                as='select'
+                value={values.city}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('city', value);
+                }}
+              >
+                <option value=''>Город продажи</option>
+                {values.cities.map(option => (
+                  <option key={'cty_' + option.id} value={option.id}>{option.name}</option>
+                ))}
+              </Field>
+
+
               <button
                 type="button"
                 className="outline"
