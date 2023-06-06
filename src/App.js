@@ -3,6 +3,8 @@ import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import { getCountries, getCities } from './API/geoApi';
+import { formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input'
+import FileUploader from './Components/FileUploader';
 import styles from './App.css';
 const tg = window.Telegram.WebApp;
 
@@ -11,6 +13,7 @@ const App = () => {
   const [conditions, setConditions] = useState([]);
   const [sellingTypes, setSellingTypes] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [files, setFiles] = useState([]);
 
   const getYears = (gen) => {
     try {
@@ -98,6 +101,7 @@ const App = () => {
       return [];
     }
   }
+
   // fill marks
   useEffect(() => {
     fetch('https://cars-base.ru/api/cars')
@@ -196,12 +200,22 @@ const App = () => {
       console.log(error);
     }
   };
-
+  const validatePhone = (value) => {
+    let error = '';
+    if (!value.startsWith('+')) {
+      error = 'Укажите телефон в формате +7XXXXXXXXXX';
+    }
+    else if (!isPossiblePhoneNumber(value)) {
+      error = 'Указан неверный номер телефона';
+    }
+    return error;
+  }
   return (
 
     <div className='App'>
       <Formik
         initialValues={{
+          files: [],
           models: [],
           generations: [],
           configurations: [],
@@ -230,7 +244,8 @@ const App = () => {
           phone: '',
         }}
         onSubmit={values => {
-          console.log('submit', values);
+          const posterData = {values, files: files};
+          console.log('submit', posterData);
         }}
       >
         {props => {
@@ -238,10 +253,15 @@ const App = () => {
             values,
             dirty,
             isSubmitting,
+            errors,
+            touched,
             handleChange,
+            handleBlur,
             handleSubmit,
             handleReset,
-            setFieldValue
+            setFieldValue,
+            setErrors,
+            setFieldTouched
           } = props;
           return (
             <form onSubmit={handleSubmit}>
@@ -458,8 +478,43 @@ const App = () => {
                   <option key={'cty_' + option.id} value={option.id}>{option.name}</option>
                 ))}
               </Field>
-
-
+              <p>---------------------------------------</p>
+              <Field
+                id='phone'
+                name='phone'
+                as='input'
+                placeholder='Телефон'
+                validate={validatePhone}
+                onChange={async e => {
+                  const { value } = e.target;
+                  if (!value.startsWith('+')) {
+                    setFieldValue('phone', '');
+                  }
+                  else {
+                    setFieldValue('phone', value);
+                  }
+                }}
+              />
+              {errors.phone && touched.phone && <div className={styles.error}>{errors.phone}</div>}
+              <br />
+              <Field
+                id='info'
+                name='info'
+                as='textarea'
+                rows='5' cols='35'
+                maxLength='256'
+                placeholder='Дополнительная информация'
+                onChange={async e => {
+                  const { value } = e.target;
+                  // if (!value.startsWith('+')) {
+                  //   setFieldValue('textarea', '');
+                  // }
+                  // else {
+                  setFieldValue('info', value);
+                  //}
+                }}
+              />
+              <FileUploader files={files} setFiles={setFiles}/>
               <button
                 type="button"
                 className="outline"
