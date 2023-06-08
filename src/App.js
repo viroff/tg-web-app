@@ -258,8 +258,8 @@ const App = () => {
           phone: '',
         }}
         onSubmit={values => {
-          const posterData = { values, files: files };
-          console.log('submit', posterData);
+          //const posterData = { values, files: files };
+          //console.log('submit', posterData);
         }}
       >
         {props => {
@@ -534,7 +534,7 @@ const App = () => {
                 files={files}
                 onupdatefiles={setFiles}
                 allowMultiple={true}
-                maxFiles={3}
+                maxFiles={10}
                 server="http://localhost:5007/api/poster"
                 name="files" /* sets the file input name, it's filepond by default */
                 labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
