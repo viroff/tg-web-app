@@ -3,22 +3,10 @@ import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import { getCountries, getCities } from './API/geoApi';
-import { formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input';
 import FileUploader from './Components/FileUploader';
+import { formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input';
+
 import styles from './App.css';
-import { FilePond, registerPlugin } from 'react-filepond';
-
-// Import FilePond styles
-import 'filepond/dist/filepond.min.css';
-
-// Import the Image EXIF Orientation and Image Preview plugins
-// Note: These need to be installed separately
-// `npm i filepond-plugin-image-preview filepond-plugin-image-exif-orientation --save`
-import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 const tg = window.Telegram.WebApp;
 
@@ -27,7 +15,8 @@ const App = () => {
   const [conditions, setConditions] = useState([]);
   const [sellingTypes, setSellingTypes] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [files, setFiles] = useState([]);
+  //const [files, setFiles] = useState([]);
+  const [images, setImages] = useState([]);
 
   const getYears = (gen) => {
     try {
@@ -224,12 +213,12 @@ const App = () => {
     }
     return error;
   }
+
   return (
 
     <div className='App'>
       <Formik
         initialValues={{
-          files: [],
           models: [],
           generations: [],
           configurations: [],
@@ -258,8 +247,8 @@ const App = () => {
           phone: '',
         }}
         onSubmit={values => {
-          //const posterData = { values, files: files };
-          //console.log('submit', posterData);
+          const posterData = { values, images: images };
+          console.log('submit', posterData);
         }}
       >
         {props => {
@@ -528,18 +517,7 @@ const App = () => {
                   //}
                 }}
               />
-              {/* <FileUploader files={files} setFiles={setFiles} /> */}
-
-              <FilePond
-                files={files}
-                onupdatefiles={setFiles}
-                allowMultiple={true}
-                maxFiles={10}
-                server="http://localhost:5007/api/poster"
-                name="files" /* sets the file input name, it's filepond by default */
-                labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
-              />
-
+              <FileUploader images={images} setImages={setImages} />
               <button
                 type="button"
                 className="outline"
