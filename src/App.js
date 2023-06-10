@@ -1,11 +1,38 @@
-
 import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
-import { getCountries, getCities } from './API/geoApi';
+import { getCountries, getCities } from './api/geoApi';
 import FileUploader from './Components/FileUploader';
-import { formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber, isPossiblePhoneNumber } from 'react-phone-number-input';
 
+import {
+  getOptionText,
+  getGenerationName,
+  getConfigurationName,
+  getModificationName,
+  safeGetData,
+  safeSetData,
+  getModels,
+  getGenerations,
+  getModifications,
+  getConfigurations,
+  getGenerationYears,
+} from './utils/addposter';
+
+import {
+  validateMark,
+  validateModel,
+  validateGeneration,
+  validateConfiguration,
+  validateModification,
+  validateMileage,
+  validateCondition,
+  validateSellingType,
+  validateCountry,
+  validateCity,
+  validatePhone,
+  validateInfo,
+  validateYear,
+} from './utils/validators';
 import styles from './App.css';
 
 const tg = window.Telegram.WebApp;
@@ -15,95 +42,9 @@ const App = () => {
   const [conditions, setConditions] = useState([]);
   const [sellingTypes, setSellingTypes] = useState([]);
   const [countries, setCountries] = useState([]);
-  //const [files, setFiles] = useState([]);
   const [images, setImages] = useState([]);
 
-  const getYears = (gen) => {
-    try {
-      const date = new Date();
-      let yTo = gen['year-stop'] ? gen['year-stop'] : date.getFullYear();
-      let yFrom = gen['year-start'];
-      let result = [];
-      for (let i = yFrom; i <= yTo; i++) {
-        result.push(i);
-      }
-      return result;
 
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
-  }
-
-  const getGenerationName = (option) => {
-    let yTo = !option['year-stop'] ? 'н.в.' : option['year-stop'];
-    let yFrom = option['year-start'];
-    let name = option['name'];
-    return `${yFrom} - ${yTo} ${name}`;
-  }
-
-  const getOptionText = (target) => {
-    try {
-      return target.options[target.selectedIndex].text;
-    } catch (error) {
-      console.log(error);
-      return '';
-    }
-  }
-
-  const getConfigurationName = (option) => {
-    let body = option['body-type'];
-    let doors = option['doors-count'];
-    let notice = option['notice'];
-
-    let doorsWord = body.includes('дв.') ? '' : doors + ' дв.';
-    return `${body} ${doorsWord} ${notice}`;
-  }
-
-  const getModificationName = (option) => {
-    try {
-      let specs = option.specifications;
-      let eVolume = specs['volume-litres'] ? specs['volume-litres'] + ' л.' : '';
-      let eType = specs['engine-type'] ? specs['engine-type'] + ',' : '';
-      let transmission = specs['transmission'] ? specs['transmission'] + ',' : '';
-      let horsePower = specs['horse-power'] ? specs['horse-power'] + ' л.с.,' : '';
-      let drive = specs['drive'];
-
-      return `${eVolume} ${horsePower} ${eType} ${transmission} ${drive}`;
-    } catch (error) {
-      console.log(error);
-      return '';
-    }
-  }
-
-  const safeSetData = (data, setMethod, defaultValue) => {
-    try {
-      if (data.error) {
-        console.log(data.error);
-        setMethod(defaultValue);
-      }
-      else {
-        setMethod(data);
-      }
-    } catch (error) {
-      console.log(data.error);
-      setMethod(defaultValue);
-    }
-  }
-  const safeGetData = (data) => {
-    try {
-      if (data.error) {
-        console.log(data.error);
-        return [];
-      }
-      else {
-        return data;
-      }
-    } catch (error) {
-      console.log(data.error);
-      return [];
-    }
-  }
 
   // fill marks
   useEffect(() => {
@@ -137,83 +78,21 @@ const App = () => {
     getCountriesInternal();
   }, []);
 
+  const onSubmit = async () => {
+    const formData = new FormData();
+    images.forEach((image) => {
+      formData.append('files', image.file);
+    });
 
-  // fill models
-  const getModels = async (selectedMark) => {
-    if (selectedMark === '') {
-      return [];
-    }
-    try {
-      const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}`);
-      return safeGetData(resp.json());
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // fill generations
-  const getGenerations = async (selectedMark, selectedModel) => {
-    if (selectedMark === '' || selectedModel === '') {
-      return [];
-    }
-    try {
-      const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}`);
-      return safeGetData(resp.json());
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // fill configurations
-  const getConfigurations = async (selectedMark, selectedModel, selectedGeneration) => {
-    if (selectedMark === '' || selectedModel === '' || selectedGeneration === '') {
-      return [];
-    }
-    try {
-      const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}/${selectedGeneration}`);
-      return safeGetData(resp.json());
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // fill modifications
-  const getModifications = (configurations, selectedConfiguration) => {
-    if (!configurations || configurations.length === 0 || selectedConfiguration === '') {
-      return [];
-    }
-    try {
-      let modifications = configurations.find(c => c.id === selectedConfiguration).modifications;
-      return safeGetData(modifications);
-    } catch (error) {
-      console.log(error);
-    }
+    await fetch('http://localhost:5007/api/poster', {
+      method: 'POST',
+      body: formData,
+      mode: 'cors', // Указываем режим CORS
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
   };
-
-  // fill years
-  const getGenerationYears = (generations, selectedGeneration) => {
-    if (!generations || generations.length === 0 || selectedGeneration === '') {
-      return [];
-    }
-    try {
-      let gen = generations.find(g => g.id === selectedGeneration);
-      let years = getYears(gen);
-      return safeGetData(years);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const validatePhone = (value) => {
-    let error = '';
-    if (!value.startsWith('+')) {
-      error = 'Укажите телефон в формате +7XXXXXXXXXX';
-    }
-    else if (!isPossiblePhoneNumber(value)) {
-      error = 'Указан неверный номер телефона';
-    }
-    return error;
-  }
-
   return (
 
     <div className='App'>
@@ -244,7 +123,7 @@ const App = () => {
           info: '',
           country: '',
           city: '',
-          phone: '',
+          phone: '+',
         }}
         onSubmit={values => {
           const posterData = { values, images: images };
@@ -256,6 +135,7 @@ const App = () => {
             values,
             dirty,
             isSubmitting,
+            isValid,
             errors,
             touched,
             handleChange,
@@ -267,12 +147,13 @@ const App = () => {
             setFieldTouched
           } = props;
           return (
-            <form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
               <Field
                 id='mark'
                 name='mark'
                 as='select'
                 value={values.mark}
+                validate={validateMark}
                 onChange={async e => {
                   const { value } = e.target;
                   const models = await getModels(value);
@@ -303,6 +184,7 @@ const App = () => {
                 name='model'
                 as='select'
                 value={values.model}
+                validate={validateModel}
                 onChange={async e => {
                   const { value } = e.target;
                   const generations = await getGenerations(values.mark, value);
@@ -331,6 +213,7 @@ const App = () => {
                 name='generation'
                 as='select'
                 value={values.generation}
+                validate={validateGeneration}
                 onChange={async e => {
                   const { value } = e.target;
                   const configurations = await getConfigurations(values.mark, values.model, value);
@@ -357,6 +240,7 @@ const App = () => {
                 name='configuration'
                 as='select'
                 value={values.configuration}
+                validate={validateConfiguration}
                 onChange={async e => {
                   const { value } = e.target;
                   const modifications = getModifications(values.configurations, value);
@@ -381,6 +265,7 @@ const App = () => {
                 name='modification'
                 as='select'
                 value={values.modification}
+                validate={validateModification}
                 onChange={async e => {
                   const { value } = e.target;
                   const years = getGenerationYears(values.generations, values.generation);
@@ -402,9 +287,9 @@ const App = () => {
                 name='year'
                 as='select'
                 value={values.year}
+                validate={validateYear}
                 onChange={async e => {
                   const { value } = e.target;
-
                   setFieldValue('year', value);
                 }}
               >
@@ -415,10 +300,34 @@ const App = () => {
               </Field>
               <p>-------------</p>
               <Field
+                id='mileage'
+                name='mileage'
+                as='input'
+                placeholder='Пробег'
+                validate={validateMileage}
+                onKeyDown={async e => {
+                  const allowedChars = /^[0-9]+$/;
+                  const inputValue = e.target.value;
+                  const isNotBs = e.key !== 'Backspace';
+                  if (!allowedChars.test(e.key) && isNotBs) {
+                    e.preventDefault();
+                  } else if (inputValue.length > 6 && isNotBs) {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('mileage', value);
+                }}
+              />
+              {errors.mileage && touched.mileage && <div className={styles.error}>{errors.mileage}</div>}
+              <br />
+              <Field
                 id='condition'
                 name='condition'
                 as='select'
                 value={values.condition}
+                validate={validateCondition}
                 onChange={async e => {
                   const { value } = e.target;
                   setFieldValue('condition', value);
@@ -435,6 +344,7 @@ const App = () => {
                 name='sellingtype'
                 as='select'
                 value={values.sellingType}
+                validate={validateSellingType}
                 onChange={async e => {
                   const { value } = e.target;
                   setFieldValue('sellingType', value);
@@ -452,6 +362,7 @@ const App = () => {
                 name='country'
                 as='select'
                 value={values.country}
+                validate={validateCountry}
                 onChange={async e => {
                   const { value } = e.target;
                   setFieldValue('country', value);
@@ -471,6 +382,7 @@ const App = () => {
                 name='city'
                 as='select'
                 value={values.city}
+                validate={validateCity}
                 onChange={async e => {
                   const { value } = e.target;
                   setFieldValue('city', value);
@@ -488,6 +400,16 @@ const App = () => {
                 as='input'
                 placeholder='Телефон'
                 validate={validatePhone}
+                onKeyDown={async e => {
+                  const onlyDigitsAndPlus = /^[0-9+]*$/;
+                  const { key, target } = e;
+                  if ((target.selectionStart === 1 || target.selectionStart === 0) && key === 'Backspace') {
+                    e.preventDefault();
+                  }
+                  if (!(onlyDigitsAndPlus.test(key) || key === 'Backspace')) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={async e => {
                   const { value } = e.target;
                   if (!value.startsWith('+')) {
@@ -507,17 +429,17 @@ const App = () => {
                 rows='5' cols='35'
                 maxLength='256'
                 placeholder='Дополнительная информация'
+                validate={validateInfo}
                 onChange={async e => {
                   const { value } = e.target;
-                  // if (!value.startsWith('+')) {
-                  //   setFieldValue('textarea', '');
-                  // }
-                  // else {
                   setFieldValue('info', value);
-                  //}
                 }}
               />
               <FileUploader images={images} setImages={setImages} />
+
+
+
+
               <button
                 type="button"
                 className="outline"
@@ -526,10 +448,10 @@ const App = () => {
               >
                 Reset
               </button>
-              <button type="submit" disabled={isSubmitting}>
+              <button type="submit" disabled={!(isValid && dirty)}>
                 Submit
               </button>
-            </form>
+            </Form>
           );
         }}
 

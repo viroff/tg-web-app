@@ -4,19 +4,17 @@ import ImageUploading from 'react-images-uploading';
 const FileUploader = (props) => {
     const maxNumber = 10;
     const onChange = (imageList, addUpdateIndex) => {
-        // data for submit
         console.log(imageList, addUpdateIndex);
         props.setImages(imageList);
     };
-
     return (
-        <div className="App">
+        <div className="Uploader">
             <ImageUploading
                 multiple
                 value={props.images}
                 onChange={onChange}
                 maxNumber={maxNumber}
-                dataURLKey="data_url"
+                dataURLKey="data"
             >
                 {({
                     imageList,
@@ -34,22 +32,23 @@ const FileUploader = (props) => {
                             onClick={onImageUpload}
                             {...dragProps}
                         >
-                            Click or Drop here
+                            Загрузить...
                         </button>
                         &nbsp;
-                        <button onClick={onImageRemoveAll}>Remove all images</button>
+                        <button onClick={onImageRemoveAll}>Очистить</button>
                         {imageList.map((image, index) => (
                             <div key={index} className="image-item">
-                                <img src={image['data_url']} alt="" width="100" />
+                                <img src={image['data']} alt="" width="100" />
                                 <div className="image-item__btn-wrapper">
-                                    <button onClick={() => onImageUpdate(index)}>Update</button>
-                                    <button onClick={() => onImageRemove(index)}>Remove</button>
+                                    <button onClick={() => onImageUpdate(index)}>Заменить</button>
+                                    <button onClick={() => onImageRemove(index)}>Удалить</button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
             </ImageUploading>
+            {/* <button onClick={onSubmit}>Отправить</button> */}
         </div>
     );
 };
