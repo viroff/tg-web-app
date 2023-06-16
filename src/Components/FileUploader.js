@@ -28,6 +28,7 @@ const FileUploader = (props) => {
                     // write your building UI
                     <div className="upload__image-wrapper">
                         <button
+                            type='button'
                             style={isDragging ? { color: 'red' } : undefined}
                             onClick={onImageUpload}
                             {...dragProps}

@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import { getCountries, getCities } from './api/geoApi';
 import FileUploader from './Components/FileUploader';
+import { dataURLtoFile } from './utils/base64toFile'
 
 import {
   getOptionText,
@@ -78,16 +79,31 @@ const App = () => {
     getCountriesInternal();
   }, []);
 
-  const onSubmit = async () => {
-    const formData = new FormData();
-    images.forEach((image) => {
-      formData.append('files', image.file);
-    });
+  const submitPoster = async (values) => {
 
+    const { city, condition, configuration, country, generation, info, mark, mileage, model, modification, phone, sellingType, year } = values;
+
+    const formData = new FormData();
+    formData.append('city', city);
+    formData.append('condition', condition);
+    formData.append('configuration', configuration);
+    formData.append('country', country);
+    formData.append('generation', generation);
+    formData.append('info', info);
+    formData.append('mark', mark);
+    formData.append('mileage', mileage);
+    formData.append('model', model);
+    formData.append('modification', modification);
+    formData.append('phone', phone);
+    formData.append('sellingType', sellingType);
+    formData.append('year', year);
+    images.forEach((image) => {
+      formData.append('files', dataURLtoFile(image.data, image.file.name));
+    });
+    console.log(formData);
     await fetch('http://localhost:5007/api/poster', {
       method: 'POST',
       body: formData,
-      mode: 'cors', // Указываем режим CORS
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
@@ -125,10 +141,7 @@ const App = () => {
           city: '',
           phone: '+',
         }}
-        onSubmit={values => {
-          const posterData = { values, images: images };
-          console.log('submit', posterData);
-        }}
+        onSubmit={submitPoster}
       >
         {props => {
           const {
@@ -436,10 +449,6 @@ const App = () => {
                 }}
               />
               <FileUploader images={images} setImages={setImages} />
-
-
-
-
               <button
                 type="button"
                 className="outline"
@@ -448,7 +457,7 @@ const App = () => {
               >
                 Reset
               </button>
-              <button type="submit" disabled={!(isValid && dirty)}>
+              <button type={'submit'} disabled={!(isValid && dirty && images.length > 0 && !isSubmitting)}>
                 Submit
               </button>
             </Form>
