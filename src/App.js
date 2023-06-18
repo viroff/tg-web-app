@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
-import { getCountries, getCities } from './API/geoApi';
+import { getCountries, getCities } from './api/geoApi';
 import FileUploader from './Components/FileUploader';
 import { dataURLtoFile } from './utils/base64toFile'
 
