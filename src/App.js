@@ -524,6 +524,10 @@ const App = () => {
               </Field>
               {errors.price && touched.price && <div className={styles.error}>{errors.price}</div>}
               <FileUploader images={images} setImages={setImages} />
+
+              <div>tgUser {tgUser}</div>
+
+
               <button
                 type="button"
                 className="outline"
