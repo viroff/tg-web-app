@@ -47,9 +47,6 @@ const App = () => {
   const [currencies, setCurrencies] = useState([]);
   const [images, setImages] = useState([]);
   const [tgApp, setTg] = useState(window.Telegram.WebApp);
-  const [tgUser, setTgUser] = useState(window.WebAppUser);
-
-
 
   // fill marks
   useEffect(() => {
@@ -82,7 +79,7 @@ const App = () => {
     };
     getCountriesInternal();
   }, []);
-  
+
   useEffect(() => {
     const getCurrenciesInternal = async () => {
       const currencies = await getCurrencies();
@@ -113,6 +110,20 @@ const App = () => {
       configurationText,
       modificationText } = values;
 
+    // tgApp.initDataUnsafe
+    const mockinitDataUnsafe = {
+      query_id: "AAH8WfcvAgAAAPxZ9y-cSGVW",
+      user: {
+        id: 5099706876,
+        first_name: "Michael",
+        last_name: "Newman",
+        username: "Michaelnman",
+        language_code: "ru"
+      },
+      auth_date: "1687722413",
+      hash: "7cdfb7a3b7235d77e2628ceb8abf32562a9a9bff33e941674de4dc68b82d29f7"
+    };
+
     const formData = new FormData();
     formData.append('city', city);
     formData.append('condition', condition);
@@ -129,11 +140,11 @@ const App = () => {
     formData.append('year', year);
     formData.append('price', price);
     formData.append('currencyId', currencyId);
+    formData.append('userId', mockinitDataUnsafe.user.id);
     images.forEach((image) => {
       formData.append('files', dataURLtoFile(image.data, image.file.name));
     });
     console.log(tgApp);
-    console.log(tgUser);
     console.log("modelText:" + modelText + " generationText:" + generationText + " configurationText:" + configurationText + " modificationText" + modificationText);
     console.log(formData);
     await fetch('http://localhost:5007/api/poster', {
@@ -524,11 +535,6 @@ const App = () => {
               </Field>
               {errors.price && touched.price && <div className={styles.error}>{errors.price}</div>}
               <FileUploader images={images} setImages={setImages} />
-
-              <div>tgUser {JSON.stringify(tgUser)}</div>
-              <div>tgApp {JSON.stringify(tgApp)}</div>
-
-
               <button
                 type="button"
                 className="outline"
