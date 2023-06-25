@@ -525,7 +525,8 @@ const App = () => {
               {errors.price && touched.price && <div className={styles.error}>{errors.price}</div>}
               <FileUploader images={images} setImages={setImages} />
 
-              <div>tgUser {tgUser}</div>
+              <div>tgUser {JSON.stringify(tgUser)}</div>
+              <div>tgApp {JSON.stringify(tgApp)}</div>
 
 
               <button
