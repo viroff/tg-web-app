@@ -13,6 +13,7 @@ const FileUploader = (props) => {
                 multiple
                 value={props.images}
                 onChange={onChange}
+                acceptType={['png', 'jpg', 'jpeg']}
                 maxNumber={maxNumber}
                 dataURLKey="data"
             >

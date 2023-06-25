@@ -2,6 +2,7 @@ import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import { getCountries, getCities } from './api/geoApi';
+import { getCurrencies } from './api/currencyApi';
 import FileUploader from './Components/FileUploader';
 import { dataURLtoFile } from './utils/base64toFile'
 
@@ -33,17 +34,20 @@ import {
   validatePhone,
   validateInfo,
   validateYear,
+  validatePrice,
+  validateCurrencyId,
 } from './utils/validators';
 import styles from './App.css';
-
-const tg = window.Telegram.WebApp;
 
 const App = () => {
   const [marks, setMarks] = useState([]);
   const [conditions, setConditions] = useState([]);
   const [sellingTypes, setSellingTypes] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
   const [images, setImages] = useState([]);
+  const [tgApp, setTg] = useState(window.Telegram.WebApp);
+  const [tgUser, setTgUser] = useState(window.WebAppUser);
 
 
 
@@ -78,10 +82,36 @@ const App = () => {
     };
     getCountriesInternal();
   }, []);
+  
+  useEffect(() => {
+    const getCurrenciesInternal = async () => {
+      const currencies = await getCurrencies();
+      setCurrencies(safeGetData(currencies));
+    };
+    getCurrenciesInternal();
+  }, []);
 
   const submitPoster = async (values) => {
 
-    const { city, condition, configuration, country, generation, info, mark, mileage, model, modification, phone, sellingType, year } = values;
+    const { city,
+      condition,
+      configuration,
+      country,
+      generation,
+      info,
+      mark,
+      mileage,
+      model,
+      modification,
+      phone,
+      sellingType,
+      year,
+      price,
+      currencyId,
+      modelText,
+      generationText,
+      configurationText,
+      modificationText } = values;
 
     const formData = new FormData();
     formData.append('city', city);
@@ -97,9 +127,14 @@ const App = () => {
     formData.append('phone', phone);
     formData.append('sellingType', sellingType);
     formData.append('year', year);
+    formData.append('price', price);
+    formData.append('currencyId', currencyId);
     images.forEach((image) => {
       formData.append('files', dataURLtoFile(image.data, image.file.name));
     });
+    console.log(tgApp);
+    console.log(tgUser);
+    console.log("modelText:" + modelText + " generationText:" + generationText + " configurationText:" + configurationText + " modificationText" + modificationText);
     console.log(formData);
     await fetch('http://localhost:5007/api/poster', {
       method: 'POST',
@@ -140,6 +175,8 @@ const App = () => {
           country: '',
           city: '',
           phone: '+',
+          price: '',
+          currencyId: 0,
         }}
         onSubmit={submitPoster}
       >
@@ -448,6 +485,44 @@ const App = () => {
                   setFieldValue('info', value);
                 }}
               />
+              <p>-------------</p>
+              <Field
+                id='price'
+                name='price'
+                as='input'
+                placeholder='Цена'
+                validate={validatePrice}
+                onKeyDown={async e => {
+                  const allowedChars = /^[0-9]+$/;
+                  const inputValue = e.target.value;
+                  const isNotBs = e.key !== 'Backspace';
+                  if (!allowedChars.test(e.key) && isNotBs) {
+                    e.preventDefault();
+                  } else if (inputValue.length > 9 && isNotBs) {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('price', value);
+                }}
+              />
+              <Field
+                id='currencyId'
+                name='currencyId'
+                as='select'
+                value={values.currencyId}
+                validate={validateCurrencyId}
+                onChange={async e => {
+                  const { value } = e.target;
+                  setFieldValue('currencyId', value);
+                }}
+              >
+                {currencies.map(option => (
+                  <option key={'curr_' + option.id} value={option.id}>{option.isoName}</option>
+                ))}
+              </Field>
+              {errors.price && touched.price && <div className={styles.error}>{errors.price}</div>}
               <FileUploader images={images} setImages={setImages} />
               <button
                 type="button"

@@ -40,6 +40,11 @@ export const validateMileage = (value) => {
     if (value === '') { error = 'Заполните все поля' }
     return error;
 }
+export const validatePrice = (value) => {
+    let error = '';
+    if (value === '') { error = 'Заполните все поля' }
+    return error;
+}
 export const validateCondition = (value) => {
     let error = '';
     if (value === '') { error = 'Заполните все поля' }
@@ -51,6 +56,11 @@ export const validateSellingType = (value) => {
     return error;
 }
 export const validateCountry = (value) => {
+    let error = '';
+    if (value === '') { error = 'Заполните все поля' }
+    return error;
+}
+export const validateCurrencyId = (value) => {
     let error = '';
     if (value === '') { error = 'Заполните все поля' }
     return error;
