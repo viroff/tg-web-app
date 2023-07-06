@@ -49,6 +49,11 @@ export const getModificationName = (option) => {
         let horsePower = specs['horse-power'] ? specs['horse-power'] + ' л.с.,' : '';
         let drive = specs['drive'];
 
+        if (eType === 'бензин,') { eType = 'бенз.,' }
+        if (eType === 'дизель,') { eType = 'диз.,' }
+        if (eType === 'электро,') { eType = 'эл.,' }
+        if (transmission === 'автоматическая,') { transmission = 'АТ,' }
+        if (transmission === 'механическая,') { transmission = 'МТ,' }
         return `${eVolume} ${horsePower} ${eType} ${transmission} ${drive}`;
     } catch (error) {
         console.log(error);
@@ -90,7 +95,7 @@ export const getModels = async (selectedMark) => {
         return [];
     }
     try {
-        const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}`);
+        const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}?key=941092125`);
         return safeGetData(resp.json());
     } catch (error) {
         console.log(error)
@@ -103,7 +108,7 @@ export const getGenerations = async (selectedMark, selectedModel) => {
         return [];
     }
     try {
-        const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}`);
+        const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}?key=941092125`);
         return safeGetData(resp.json());
     } catch (error) {
         console.log(error)
@@ -116,7 +121,7 @@ export const getConfigurations = async (selectedMark, selectedModel, selectedGen
         return [];
     }
     try {
-        const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}/${selectedGeneration}`);
+        const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}/${selectedGeneration}?key=941092125`);
         return safeGetData(resp.json());
     } catch (error) {
         console.log(error)
@@ -149,3 +154,7 @@ export const getGenerationYears = (generations, selectedGeneration) => {
         console.log(error);
     }
 };
+
+export const isObjectEmpty = (objectName) => {
+    return Object.keys(objectName).length === 0
+}

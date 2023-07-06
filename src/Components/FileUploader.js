@@ -1,5 +1,7 @@
 import React from 'react';
 import ImageUploading from 'react-images-uploading';
+import { Button } from 'primereact/button';
+import { Image } from 'primereact/image';
 
 const FileUploader = (props) => {
     const maxNumber = 10;
@@ -26,31 +28,38 @@ const FileUploader = (props) => {
                     isDragging,
                     dragProps,
                 }) => (
-                    // write your building UI
-                    <div className="upload__image-wrapper">
-                        <button
-                            type='button'
-                            style={isDragging ? { color: 'red' } : undefined}
-                            onClick={onImageUpload}
-                            {...dragProps}
-                        >
-                            Загрузить...
-                        </button>
-                        &nbsp;
-                        <button onClick={onImageRemoveAll}>Очистить</button>
-                        {imageList.map((image, index) => (
-                            <div key={index} className="image-item">
-                                <img src={image['data']} alt="" width="100" />
-                                <div className="image-item__btn-wrapper">
-                                    <button onClick={() => onImageUpdate(index)}>Заменить</button>
-                                    <button onClick={() => onImageRemove(index)}>Удалить</button>
+                    <>
+
+                        <div className='row-divider' />
+                        <div className="flex flex-wrap imgwrapper">
+                            {imageList.map((image, index) => (
+                                <div key={'dwx' + index} className='imgcontainer'>
+                                    <Image key={index} src={image['data']} width="250" />
+                                    <Button type='button' key={'bsd' + index} icon="pi pi-times" rounded text severity="danger" className='imgbutton' onClick={() => onImageRemove(index)} aria-label="Cancel" />
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                        <div className="flex justify-content-center ">
+                            <Button
+                                size='small'
+                                style={isDragging ? { color: 'red' } : undefined}
+                                onClick={onImageUpload}
+                                {...dragProps}
+                                type='button'
+                            >
+                                Загрузить...
+                            </Button>
+                            <Button
+                                size='small'
+                                className='marginLeft'
+                                onClick={onImageRemoveAll}
+                                type='button'>
+                                Очистить
+                            </Button>
+                        </div>
+                    </>
                 )}
             </ImageUploading>
-            {/* <button onClick={onSubmit}>Отправить</button> */}
         </div>
     );
 };
