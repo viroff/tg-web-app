@@ -191,7 +191,6 @@ const App = () => {
           info: '',
           country: {},
           city: {},
-          phone: '',
           price: '',
           currencyId: 0,
           currency: {},
