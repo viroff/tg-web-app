@@ -238,6 +238,8 @@ const App = () => {
                   name='mark'
                   value={values.mark}
                   filter
+                  showFilterClear
+                  showOnFocus
                   //validate={validateMark}
                   optionLabel="name"
                   valueTemplate={(option, props) => {
