@@ -526,7 +526,6 @@ const App = () => {
                   prefix='+'
                   value={values.phone}
                   locale="ru-RU"
-                  minFractionDigits={0}
                   onChange={async e => {
                     const { value } = e;
                     setFieldValue('phone', value);
