@@ -52,7 +52,16 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [images, setImages] = useState([]);
-  const [tgApp, setTg] = useState(window.Telegram.WebApp);
+  const [tgApp, setTg] = useState(window.Telegram.WebApp);  // tg init
+
+
+  useEffect(() => {
+    console.info('Tg init');
+    if (tgApp) {
+      tgApp.expand();
+      console.info('bot screen expanded');
+    }
+  }, []);
 
   // fill marks
   useEffect(() => {
