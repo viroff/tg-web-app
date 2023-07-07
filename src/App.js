@@ -224,6 +224,7 @@ const App = () => {
           } = props;
           return (
             <div className="card flex justify-content-center ">
+              <div className='bumper'></div>
               <Form onSubmit={handleSubmit}>
                 <Divider align="left">
                   <div className="inline-flex align-items-center">
