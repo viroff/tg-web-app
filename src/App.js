@@ -455,6 +455,7 @@ const App = () => {
                   value={values.info}
                 />
                 <div className='row-divider' />
+                <div className="mb-3">
                 <InputNumber
                   id='price'
                   name='price'
@@ -479,6 +480,7 @@ const App = () => {
                   optionLabel="isoName"
                   options={currencies}
                 />
+                </div>
                 <Divider align="left">
                   <div className="inline-flex align-items-center">
                     <b>Фотографии</b>

@@ -1,4 +1,4 @@
-body{
+body {
 	/* color: var(--tg-theme-text-color); */
 	/* background: var(--tg-theme-bg-color); */
 	/* display: flex;
@@ -6,9 +6,11 @@ body{
 	align-items: center; */
 	/* font-size: 18px; */
 }
-.marginLeft{
+
+.marginLeft {
 	margin-left: 10px;
 }
+
 /* .hint{
 	color: var(--tg-theme-hint-color);
 }
