@@ -225,7 +225,13 @@ const App = () => {
           return (
             <div className="card flex justify-content-center ">
               <Form onSubmit={handleSubmit}>
-              <p className='agreement'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              <p className='agreement'>Lorem ipsum dolor sit amet, consectetur 
+              adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+              ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor 
+              in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit 
+              anim id est laborum.</p>
                 <Divider align="left">
                   <div className="inline-flex align-items-center">
                     <b>Автомобиль</b>
@@ -238,8 +244,8 @@ const App = () => {
                   id='mark'
                   name='mark'
                   value={values.mark}
-                  filter
-                  showFilterClear
+                  //filter
+                  //showFilterClear
                   // showOnFocus
                   //validate={validateMark}
                   filterInputAutoFocus={false}
