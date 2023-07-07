@@ -455,7 +455,7 @@ const App = () => {
                   value={values.info}
                 />
                 <div className='row-divider' />
-                <div className="mb-3">
+                <div className="inoneline">
                 <InputNumber
                   id='price'
                   name='price'
@@ -468,7 +468,6 @@ const App = () => {
                 />
                 <Dropdown
                   disabled={currencies.length === 0}
-                  className='marginLeft'
                   id='currencyId'
                   name='currencyId'
                   as='select'
