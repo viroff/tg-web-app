@@ -241,6 +241,7 @@ const App = () => {
                   showFilterClear
                   // showOnFocus
                   //validate={validateMark}
+                  filterInputAutoFocus={false}
                   optionLabel="name"
                   valueTemplate={(option, props) => {
                     if (option) {
@@ -456,29 +457,29 @@ const App = () => {
                 />
                 <div className='row-divider' />
                 <div className="inoneline">
-                <InputNumber
-                  id='price'
-                  name='price'
-                  locale="jp-JP"
-                  placeholder='Цена'
-                  onChange={async e => {
-                    const { value } = e;
-                    setFieldValue('price', value);
-                  }}
-                />
-                <Dropdown
-                  disabled={currencies.length === 0}
-                  id='currencyId'
-                  name='currencyId'
-                  as='select'
-                  value={isObjectEmpty(values.currency) ? currencies[0] : values.currency}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('currency', value);
-                  }}
-                  optionLabel="isoName"
-                  options={currencies}
-                />
+                  <InputNumber
+                    id='price'
+                    name='price'
+                    locale="jp-JP"
+                    placeholder='Цена'
+                    onChange={async e => {
+                      const { value } = e;
+                      setFieldValue('price', value);
+                    }}
+                  />
+                  <Dropdown
+                    disabled={currencies.length === 0}
+                    id='currencyId'
+                    name='currencyId'
+                    as='select'
+                    value={isObjectEmpty(values.currency) ? currencies[0] : values.currency}
+                    onChange={async e => {
+                      const { value } = e.target;
+                      setFieldValue('currency', value);
+                    }}
+                    optionLabel="isoName"
+                    options={currencies}
+                  />
                 </div>
                 <Divider align="left">
                   <div className="inline-flex align-items-center">
