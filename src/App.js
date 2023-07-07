@@ -224,6 +224,12 @@ const App = () => {
           } = props;
           return (
             <div className="card flex justify-content-center ">
+              <select>
+                <option>AAA</option>
+                <option>BBB</option>
+                <option>CCC</option>
+                <option>DDD</option>
+              </select>
               <Form onSubmit={handleSubmit}>
               <p className='agreement'>Lorem ipsum dolor sit amet, consectetur 
               adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
