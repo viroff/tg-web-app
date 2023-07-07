@@ -33,6 +33,6 @@ body {
 #usercard{
 	text-align: center;
 } */
-.bumper {
-	height: 100px;
+.agreement {
+	max-width: 250px;
 }
