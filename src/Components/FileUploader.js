@@ -6,7 +6,6 @@ import { DismissCircle32Filled } from "@fluentui/react-icons";
 const FileUploader = (props) => {
     const maxNumber = 10;
     const onChange = (imageList, addUpdateIndex) => {
-        console.log(imageList, addUpdateIndex);
         props.setImages(imageList);
     };
     return (
@@ -29,7 +28,7 @@ const FileUploader = (props) => {
                     dragProps,
                 }) => (
                     <>
-
+                    {imageList.length}
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             {imageList.map((image, index) => (
