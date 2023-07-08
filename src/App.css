@@ -21,9 +21,17 @@
 	text-align: center;
 } */
 .App,
-.buttonpanel {
+.centerpanel {
 	display: flex;
 	justify-content: center;
+}
+
+.centerpanel {
+	gap: 10px;
+}
+
+.column {
+	flex-direction: column;
 }
 
 .panel {

@@ -378,14 +378,15 @@ const App = () => {
                     const isNotBs = e.key !== 'Backspace';
                     if (!allowedChars.test(e.key) && isNotBs) {
                       e.preventDefault();
-                    } else if (inputValue.length > 6 && isNotBs) {
+                    } else if (inputValue.length > 9 && isNotBs) {
                       e.preventDefault();
                     }
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    const allowedValue = value.replace(/[^0-9]/g, '');
-                    setFieldValue('mileage', allowedValue);
+                    const noBsValue = value.replace(/[^0-9]/g, '');
+                    const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                    setFieldValue('mileage', dividedValue);
                   }}
                 />
                 <div className='bottompadded' />
@@ -451,8 +452,8 @@ const App = () => {
                     onChange={async (e, data) => {
                       const { value } = data;
                       const noBsValue = value.replace(/[^0-9]/g, '');
-                      const divaidedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                      setFieldValue('price', divaidedValue);
+                      const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                      setFieldValue('price', dividedValue);
                     }}
                   />
                   <div className='bottompadded' />
@@ -470,18 +471,12 @@ const App = () => {
                   </Select>
                 </div>
                 <div className='bottompadded' />
-                {/*
-                <Divider align="left">
-                  <div className="inline-flex align-items-center">
-                    <b>Фотографии</b>
-                  </div>
-                </Divider>
+
+                <div className='bottompadded' />
+                <Divider align="left" className='bottompadded'><b>Фотографии</b></Divider>
                 <FileUploader images={images} setImages={setImages} />
-                <Divider align="left">
-                  <div className="inline-flex align-items-center">
-                    <b>Место продажи</b>
-                  </div>
-                  </Divider>*/}
+                <div className='bottompadded' />
+                <Divider align="left" className='bottompadded'><b>Место продажи</b></Divider>
                 <Select
                   disabled={countries.length === 0 || values.price === ''}
                   id='country'
@@ -549,9 +544,8 @@ const App = () => {
                 </Button> */}
                 <Divider />
                 <div className='bottompadded' />
-                <div className="buttonpanel">
+                <div className="centerpanel">
                   <Button
-                    className='marginLeft'
                     size="normal"
                     severity="success"
                     type={'submit'} disabled={!(isValid && dirty && images.length > 0 && !isSubmitting)}>
