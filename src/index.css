@@ -19,8 +19,8 @@ body {
   margin-bottom: 1rem;
 }
 
-.row-divider {
-  height: 10px;
+.bottompadded {
+  padding-bottom: 12px;
 }
 
 .imgwrapper {

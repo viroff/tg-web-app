@@ -5,12 +5,8 @@ import { getCountries, getCities } from './api/geoApi';
 import { getCurrencies } from './api/currencyApi';
 import FileUploader from './Components/FileUploader';
 import { dataURLtoFile } from './utils/base64toFile';
-import "primereact/resources/primereact.min.css";
-import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
-import { Dropdown } from 'primereact/dropdown';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { InputNumber } from 'primereact/inputnumber';
+import { Button, Textarea, Divider, Select, Input } from '@fluentui/react-components';
+
 
 import {
   getGenerationName,
@@ -24,6 +20,7 @@ import {
   getConfigurations,
   getGenerationYears,
   isObjectEmpty,
+  getOptionText
 } from './utils/addposter';
 
 import {
@@ -171,7 +168,6 @@ const App = () => {
     });
   };
   return (
-
     <div className='App'>
       <Formik
         initialValues={{
@@ -194,15 +190,16 @@ const App = () => {
           configurationText: '',
           modification: {},
           modificationText: '',
-          state: {},
+          state: '',
           mileage: '',
-          sellingMethod: {},
+          sellingMethod: '',
           info: '',
-          country: {},
-          city: {},
+          country: '',
+          city: '',
           price: '',
           currencyId: 0,
-          currency: {},
+          currency: '',
+          phone: '',
         }}
         onSubmit={submitPoster}
       >
@@ -223,31 +220,17 @@ const App = () => {
             setFieldTouched
           } = props;
           return (
-            <div className="card flex justify-content-center ">
-              
+            <div className="panel">
               <Form onSubmit={handleSubmit}>
-              <p className='agreement'>Lorem ipsum dolor sit amet, consectetur 
-              adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
-              ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor 
-              in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit 
-              anim id est laborum.</p>
-              <select>
-                <option>AAA</option>
-                <option>BBB</option>
-                <option>CCC</option>
-                <option>DDD</option>
-              </select>
-                <Divider align="left">
-                  <div className="inline-flex align-items-center">
-                    <b>Автомобиль</b>
-                  </div>
-                </Divider>
-                <Dropdown
-                  emptyFilterMessage="Такой марки нет"
-                  className="w-full"
-                  placeholder="Выберите марку"
+                <p className='agreement bottompadded'>Lorem ipsum dolor sit amet, consectetur
+                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                  ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                  in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+                  anim id est laborum.</p>
+                <Divider align="left" className='bottompadded'><b>Автомобиль</b></Divider>
+                <Select
                   id='mark'
                   name='mark'
                   value={values.mark}
@@ -257,29 +240,11 @@ const App = () => {
                   //validate={validateMark}
                   filterInputAutoFocus={false}
                   optionLabel="name"
-                  valueTemplate={(option, props) => {
-                    if (option) {
-                      return (
-                        <div className="flex align-items-center">
-                          <div>{option.name}</div>
-                        </div>
-                      );
-                    }
-
-                    return <span>{props.placeholder}</span>;
-                  }}
-                  itemTemplate={(option) => {
-                    return (
-                      <div className="flex align-items-center">
-                        <div>{option.name}</div>
-                      </div>
-                    );
-                  }}
                   onChange={async e => {
                     const { value } = e.target;
-                    const models = await getModels(value.id);
+                    const models = await getModels(value);
                     setFieldValue('mark', value);
-                    setFieldValue('markText', value.name);
+                    setFieldValue('markText', getOptionText(e.target));
                     setFieldValue('models', models);
 
                     setFieldValue('model', '');
@@ -293,20 +258,21 @@ const App = () => {
                     setFieldValue('modifications', []);
                     setFieldValue('years', []);
                   }}
-                  options={marks}
-                />
-                <div className='row-divider' />
-                <Dropdown
+                >
+                  <option value='' hidden>Выберите марку</option>
+                  {marks.map((mark) => (<option key={'mark_' + mark.id} value={mark.id}>{mark.name}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Select
                   disabled={values.models.length === 0}
-                  className="w-full "
                   id='model'
                   name='model'
                   value={values.model}
                   onChange={async e => {
                     const { value } = e.target;
-                    const generations = await getGenerations(values.mark.id, value.id);
+                    const generations = await getGenerations(values.mark, value);
                     setFieldValue('model', value);
-                    setFieldValue('modelText', value.id);
+                    setFieldValue('modelText', getOptionText(e.target));
                     setFieldValue('generations', generations);
 
                     setFieldValue('generation', '');
@@ -318,22 +284,21 @@ const App = () => {
                     setFieldValue('modifications', []);
                     setFieldValue('years', []);
                   }}
-                  placeholder='Выберите модель'
-                  optionLabel="name"
-                  options={values.models}
-                />
-                <div className='row-divider' />
-                <Dropdown
+                >
+                  <option value='' hidden>Выберите модель</option>
+                  {values.models.map((model) => (<option key={'model_' + model.id} value={model.id}>{model.name}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Select
                   disabled={values.generations.length === 0}
-                  className="w-full "
                   id='generation'
                   name='generation'
                   value={values.generation}
                   onChange={async e => {
                     const { value } = e.target;
-                    const configurations = await getConfigurations(values.mark.id, values.model.id, value.id);
+                    const configurations = await getConfigurations(values.mark, values.model, value);
                     setFieldValue('generation', value);
-                    setFieldValue('generationText', value.id);
+                    setFieldValue('generationText', getOptionText(e.target));
                     setFieldValue('configurations', configurations);
 
                     setFieldValue('configuration', '');
@@ -342,122 +307,118 @@ const App = () => {
 
                     setFieldValue('modifications', []);
                     setFieldValue('years', []);
-                  }}
-                  placeholder='Выберите поколение'
-                  optionLabel="fullName"
-                  options={values.generations.map(option => ({ ...option, fullName: getGenerationName(option) }))}
-                />
-                <div className='row-divider' />
-                <Dropdown
+                  }}>
+                  <option value='' hidden>Выберите поколение</option>
+                  {values.generations.map(generation => (<option key={'gen_' + generation.id} value={generation.id}>{getGenerationName(generation)}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Select
                   disabled={values.configurations.length === 0}
-                  className="w-full "
                   id='configuration'
                   name='configuration'
                   value={values.configuration}
                   onChange={async e => {
                     const { value } = e.target;
-                    const modifications = getModifications(values.configurations, value.id);
+                    const modifications = getModifications(values.configurations, value);
                     setFieldValue('configuration', value);
-                    setFieldValue('configurationText', value.id);
+                    setFieldValue('configurationText', getOptionText(e.target));
                     setFieldValue('modifications', modifications);
 
                     setFieldValue('modification', '');
                     setFieldValue('year', '');
 
                     setFieldValue('years', []);
-                  }}
-                  placeholder='Выберите конфигурацию'
-                  optionLabel="fullName"
-                  options={values.configurations.map(option => ({ ...option, fullName: getConfigurationName(option) }))}
-                />
-                <div className='row-divider' />
-                <Dropdown
+                  }}>
+                  <option value='' hidden>Выберите конфигурацию</option>
+                  {values.configurations.map(configuration => (<option key={'con_' + configuration.id} value={configuration.id}>{getConfigurationName(configuration)}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Select
                   disabled={values.modifications.length === 0}
-                  className="w-full "
                   id='modification'
                   name='modification'
                   value={values.modification}
                   onChange={async e => {
                     const { value } = e.target;
-                    const years = getGenerationYears(values.generations, values.generation.id);
+                    const years = getGenerationYears(values.generations, values.generation);
                     setFieldValue('modification', value);
-                    setFieldValue('modificationText', value.id);
+                    setFieldValue('modificationText', getOptionText(e.target));
                     setFieldValue('years', years);
 
                     setFieldValue('year', '');
-                  }}
-                  placeholder='Выберите модификацию'
-                  optionLabel="fullName"
-                  options={values.modifications.map(option => ({ ...option, fullName: getModificationName(option) }))}
-                />
-                <div className='row-divider' />
-                <Dropdown
+                  }}>
+                  <option value='' hidden>Выберите модификацию</option>
+                  {values.modifications.map(modification => (<option key={'mod_' + modification['complectation-id']} value={modification}>{getModificationName(modification)}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Select
                   disabled={values.years.length === 0}
-                  className="w-full "
                   id='year'
                   name='year'
                   value={values.year}
                   onChange={async e => {
                     const { value } = e.target;
                     setFieldValue('year', value);
-                  }}
-                  placeholder='Выберите год выпуска'
-                  options={values.years}
-                />
-                <div className='row-divider' />
-                <InputNumber
-                  className="w-full "
+                  }}>
+                  <option value='' hidden>Выберите год выпуска</option>
+                  {values.years.map(year => (<option key={'years_' + year} value={year}>{year}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Input
+                  className='fullwidth'
+                  disabled={values.year === ''}
                   id='mileage'
                   name='mileage'
                   placeholder='Пробег'
-                  suffix=' км.'
-                  locale="ru-RU"
-                  minFractionDigits={0}
-                  max={99_999_999}
+                  contentAfter={'км.'}
                   value={values.mileage}
-                  onChange={async e => {
-                    const { value } = e;
+                  onKeyDown={async (e, data) => {
+                    const allowedChars = /^[0-9]+$/;
+                    const inputValue = e.target.value;
+                    const isNotBs = e.key !== 'Backspace';
+                    if (!allowedChars.test(e.key) && isNotBs) {
+                      e.preventDefault();
+                    } else if (inputValue.length > 6 && isNotBs) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={async (e, data) => {
+                    const { value } = data;
+                    console.log(value);
                     setFieldValue('mileage', value);
                   }}
                 />
-                <div className='row-divider' />
-                <Dropdown
-                  disabled={conditions.length === 0}
-                  className="w-full "
+                <div className='bottompadded' />
+                <Select
+                  disabled={conditions.length === 0 || values.mileage === ''}
                   id='condition'
                   name='condition'
                   value={values.condition}
                   onChange={async e => {
                     const { value } = e.target;
                     setFieldValue('condition', value);
-                  }}
-                  placeholder='Состояние'
-                  optionLabel="name"
-                  options={conditions}
-                />
-                <Divider align="left">
-                  <div className="inline-flex align-items-center">
-                    <b>Параметры предложения</b>
-                  </div>
-                </Divider>
-                <Dropdown
-                  disabled={sellingTypes.length === 0}
-                  className="w-full "
+                  }}>
+                  <option value='' hidden>Состояние</option>
+                  {conditions.map(condition => (<option key={'condition_' + condition.id} value={condition.id}>{condition.name}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Divider align="left" className='bottompadded'><b>Параметры предложения</b></Divider>
+                <Select
+                  disabled={sellingTypes.length === 0 || values.condition === ''}
                   id='sellingtype'
                   name='sellingtype'
                   value={values.sellingType}
                   onChange={async e => {
                     const { value } = e.target;
                     setFieldValue('sellingType', value);
-                  }}
-                  placeholder='Тип продажи'
-                  optionLabel="name"
-                  options={sellingTypes}
-                />
-                <div className='row-divider' />
-                <InputTextarea
-                  autoResize
-                  className="w-full "
+                  }}>
+                  <option value='' hidden>Тип продажи</option>
+                  {sellingTypes.map(st => (<option key={'st_' + st.id} value={st.id}>{st.name}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Textarea
+                  className='fullwidth'
+                  disabled={values.sellingType === ''}
                   id='info'
                   name='info'
                   rows={5} cols={30}
@@ -469,20 +430,34 @@ const App = () => {
                   }}
                   value={values.info}
                 />
-                <div className='row-divider' />
+                <div className='bottompadded' />
                 <div className="inoneline">
-                  <InputNumber
+                  <Input
+                    disabled={currencies.length === 0 || values.sellingType === ''}
                     id='price'
                     name='price'
-                    locale="jp-JP"
+                    value={values.price}
                     placeholder='Цена'
-                    onChange={async e => {
-                      const { value } = e;
-                      setFieldValue('price', value);
+                    onKeyDown={async e => {
+                      const allowedChars = /^[0-9]+$/;
+                      const inputValue = e.target.value;
+                      const isNotBs = e.key !== 'Backspace';
+                      if (!allowedChars.test(e.key) && isNotBs) {
+                        e.preventDefault();
+                      } else if (inputValue.length > 10 && isNotBs) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onChange={async (e, data) => {
+                      const { value } = data;
+                      const noBsValue = value.replace(/[^0-9]/g, '');
+                      const divaidedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                      setFieldValue('price', divaidedValue);
                     }}
                   />
-                  <Dropdown
-                    disabled={currencies.length === 0}
+                  <div className='bottompadded' />
+                  <Select
+                    disabled={currencies.length === 0 || values.sellingType === ''}
                     id='currencyId'
                     name='currencyId'
                     as='select'
@@ -490,11 +465,12 @@ const App = () => {
                     onChange={async e => {
                       const { value } = e.target;
                       setFieldValue('currency', value);
-                    }}
-                    optionLabel="isoName"
-                    options={currencies}
-                  />
+                    }}>
+                    {currencies.map(curr => (<option key={'curr_' + curr.id} value={curr.id}>{curr.isoName}</option>))}
+                  </Select>
                 </div>
+                <div className='bottompadded' />
+                {/*
                 <Divider align="left">
                   <div className="inline-flex align-items-center">
                     <b>Фотографии</b>
@@ -505,59 +481,62 @@ const App = () => {
                   <div className="inline-flex align-items-center">
                     <b>Место продажи</b>
                   </div>
-                </Divider>
-                <Dropdown
-                  disabled={countries.length === 0}
-                  className="w-full "
+                  </Divider>*/}
+                <Select
+                  disabled={countries.length === 0 || values.price === ''}
                   id='country'
                   name='country'
                   value={values.country}
                   onChange={async e => {
                     const { value } = e.target;
                     setFieldValue('country', value);
-                    const cities = await getCities(value.id);
+                    const cities = await getCities(value);
                     setFieldValue('cities', cities);
                     setFieldValue('city', '');
-                  }}
-                  placeholder='Страна'
-                  optionLabel="name"
-                  options={countries}
-                />
-                <div className='row-divider' />
-                <Dropdown
-                  disabled={values.cities.length === 0}
+                  }}>
+                  <option value='' hidden>Страна</option>
+                  {countries.map(cntr => (<option key={'cntr_' + cntr.id} value={cntr.id}>{cntr.name}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Select
+                  disabled={values.cities.length === 0 || values.country === ''}
                   id='city'
-                  className="w-full "
                   name='city'
                   value={values.city}
                   onChange={async e => {
                     const { value } = e.target;
                     setFieldValue('city', value);
-                  }}
-                  placeholder='Город'
-                  optionLabel="name"
-                  options={values.cities}
-                />
-                <Divider align="left">
-                  <div className="inline-flex align-items-center">
-                    <b>Контактная информация</b>
-                  </div>
-                </Divider>
-                <InputNumber
-                  useGrouping={false}
+                  }}>
+                  <option value='' hidden>Город</option>
+                  {values.cities.map(city => (<option key={'city_' + city.id} value={city.id}>{city.name}</option>))}
+                </Select>
+                <div className='bottompadded' />
+                <Divider align="left" className='bottompadded'><b>Контактная информация</b></Divider>
+                <Input
+                  className='fullwidth'
+                  disabled={values.city === ''}
                   id='phone'
-                  className="w-full "
                   name='phone'
-                  placeholder='Телефон'
-                  prefix='+'
                   value={values.phone}
-                  locale="ru-RU"
-                  onChange={async e => {
-                    const { value } = e;
-                    setFieldValue('phone', value);
+                  placeholder='Телефон в международном формате'
+                  onKeyDown={async e => {
+                    const allowedChars = /^[0-9]+$/;
+                    const inputValue = e.target.value;
+                    const isNotBs = e.key !== 'Backspace';
+                    if (!allowedChars.test(e.key) && isNotBs) {
+                      e.preventDefault();
+                    } else if (inputValue.length > 10 && isNotBs) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={async (e, data) => {
+                    const { value } = data;
+                    const noPlusValue = value.replace('+', '');
+                    const plusedValue = '+' + noPlusValue;
+                    setFieldValue('phone', plusedValue);
                   }}
                 />
-                <div className='row-divider' />
+                <div className='bottompadded' />
                 {/* <Button
                   size="small"
                   type="button"
@@ -568,7 +547,8 @@ const App = () => {
                   Reset
                 </Button> */}
                 <Divider />
-                <div className="flex justify-content-center ">
+                <div className='bottompadded' />
+                <div className="buttonpanel">
                   <Button
                     className='marginLeft'
                     size="normal"
