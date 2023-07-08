@@ -1,7 +1,7 @@
 import React from 'react';
 import ImageUploading from 'react-images-uploading';
-import { Button } from 'primereact/button';
-import { Image } from 'primereact/image';
+import { Button, Image } from '@fluentui/react-components';
+import { DismissCircle32Filled } from "@fluentui/react-icons";
 
 const FileUploader = (props) => {
     const maxNumber = 10;
@@ -31,17 +31,22 @@ const FileUploader = (props) => {
                     <>
 
                         <div className='row-divider' />
-                        <div className="flex flex-wrap imgwrapper">
+                        <div className="centerpanel panel column">
                             {imageList.map((image, index) => (
                                 <div key={'dwx' + index} className='imgcontainer'>
-                                    <Image key={index} src={image['data']} width="250" />
-                                    <Button type='button' key={'bsd' + index} icon="pi pi-times" rounded text severity="danger" className='imgbutton' onClick={() => onImageRemove(index)} aria-label="Cancel" />
+                                    <Image key={index} src={image['data']} width="290" />
+                                    <Button
+                                        appearance='transparent'
+                                        key={'bsd' + index}
+                                        icon={<DismissCircle32Filled />}
+                                        className='imgbutton'
+                                        onClick={() => onImageRemove(index)} />
                                 </div>
                             ))}
                         </div>
-                        <div className="flex justify-content-center ">
+                        <div className="centerpanel">
                             <Button
-                                size='small'
+                                size="normal"
                                 style={isDragging ? { color: 'red' } : undefined}
                                 onClick={onImageUpload}
                                 {...dragProps}
@@ -50,8 +55,8 @@ const FileUploader = (props) => {
                                 Загрузить...
                             </Button>
                             <Button
-                                size='small'
-                                className='marginLeft'
+                                disabled={imageList.length === 0}
+                                size="normal"
                                 onClick={onImageRemoveAll}
                                 type='button'>
                                 Очистить
