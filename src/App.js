@@ -445,7 +445,7 @@ const App = () => {
                       const isNotBs = e.key !== 'Backspace';
                       if (!allowedChars.test(e.key) && isNotBs) {
                         e.preventDefault();
-                      } else if (inputValue.length > 10 && isNotBs) {
+                      } else if (inputValue.length > 12 && isNotBs) {
                         e.preventDefault();
                       }
                     }}
@@ -453,7 +453,7 @@ const App = () => {
                       const { value } = data;
                       const noBsValue = value.replace(/[^0-9]/g, '');
                       const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                      setFieldValue('price', dividedValue);
+                      setFieldValue('price', dividedValue.slice(0,12));
                     }}
                   />
                   <div className='bottompadded' />
@@ -520,7 +520,7 @@ const App = () => {
                     const isNotBs = e.key !== 'Backspace';
                     if (!allowedChars.test(e.key) && isNotBs) {
                       e.preventDefault();
-                    } else if (inputValue.length > 10 && isNotBs) {
+                    } else if (inputValue.length > 12 && isNotBs) {
                       e.preventDefault();
                     }
                   }}
@@ -529,7 +529,7 @@ const App = () => {
                     const allowedValue = value.replace(/[^0-9]/g, '');
                     const noPlusValue = allowedValue.replace('+', '');
                     const plusedValue = '+' + noPlusValue;
-                    setFieldValue('phone', plusedValue);
+                    setFieldValue('phone', plusedValue.slice(0,12));
                   }}
                 />
                 <div className='bottompadded' />
