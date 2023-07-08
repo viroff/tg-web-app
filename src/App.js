@@ -384,7 +384,7 @@ const App = () => {
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0,12);
+                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0,9);
                     const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                     setFieldValue('mileage', dividedValue);
                   }}
@@ -445,13 +445,13 @@ const App = () => {
                       const isNotBs = e.key !== 'Backspace';
                       if (!allowedChars.test(e.key) && isNotBs) {
                         e.preventDefault();
-                      } else if (inputValue.length > 12 && isNotBs) {
+                      } else if (inputValue.length > 9 && isNotBs) {
                         e.preventDefault();
                       }
                     }}
                     onChange={async (e, data) => {
                       const { value } = data;
-                      const noBsValue = value.replace(/[^0-9]/g, '').slice(0,12);
+                      const noBsValue = value.replace(/[^0-9]/g, '').slice(0,9);
                       const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                       setFieldValue('price', dividedValue);
                     }}
