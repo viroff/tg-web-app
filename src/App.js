@@ -193,7 +193,7 @@ const App = () => {
           state: '',
           mileage: '',
           sellingMethod: '',
-          info: '',
+          info: ' ',
           country: '',
           city: '',
           price: '',
@@ -384,7 +384,7 @@ const App = () => {
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    const noBsValue = value.replace(/[^0-9]/g, '');
+                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0,12);
                     const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                     setFieldValue('mileage', dividedValue);
                   }}
@@ -451,9 +451,9 @@ const App = () => {
                     }}
                     onChange={async (e, data) => {
                       const { value } = data;
-                      const noBsValue = value.replace(/[^0-9]/g, '');
+                      const noBsValue = value.replace(/[^0-9]/g, '').slice(0,12);
                       const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                      setFieldValue('price', dividedValue.slice(0,12));
+                      setFieldValue('price', dividedValue);
                     }}
                   />
                   <div className='bottompadded' />
@@ -520,16 +520,16 @@ const App = () => {
                     const isNotBs = e.key !== 'Backspace';
                     if (!allowedChars.test(e.key) && isNotBs) {
                       e.preventDefault();
-                    } else if (inputValue.length > 12 && isNotBs) {
+                    } else if (inputValue.length > 16 && isNotBs) {
                       e.preventDefault();
                     }
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
                     const allowedValue = value.replace(/[^0-9]/g, '');
-                    const noPlusValue = allowedValue.replace('+', '');
+                    const noPlusValue = allowedValue.replace('+', '').slice(0,14);
                     const plusedValue = '+' + noPlusValue;
-                    setFieldValue('phone', plusedValue.slice(0,12));
+                    setFieldValue('phone', plusedValue);
                   }}
                 />
                 <div className='bottompadded' />
