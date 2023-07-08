@@ -1,16 +1,3 @@
-body {
-	/* color: var(--tg-theme-text-color); */
-	/* background: var(--tg-theme-bg-color); */
-	/* display: flex;
-	flex-direction: column;
-	align-items: center; */
-	/* font-size: 18px; */
-}
-
-.marginLeft {
-	margin-left: 10px;
-}
-
 /* .hint{
 	color: var(--tg-theme-hint-color);
 }
@@ -33,6 +20,20 @@ body {
 #usercard{
 	text-align: center;
 } */
+.App,
+.buttonpanel {
+	display: flex;
+	justify-content: center;
+}
+
+.panel {
+	max-width: 290px;
+}
+
+.fullwidth {
+	width: 100%;
+}
+
 .agreement {
 	max-width: 250px;
 }
