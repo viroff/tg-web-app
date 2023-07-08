@@ -384,8 +384,8 @@ const App = () => {
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    console.log(value);
-                    setFieldValue('mileage', value);
+                    const allowedValue = value.replace(/[^0-9]/g, '');
+                    setFieldValue('mileage', allowedValue);
                   }}
                 />
                 <div className='bottompadded' />
@@ -531,7 +531,8 @@ const App = () => {
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    const noPlusValue = value.replace('+', '');
+                    const allowedValue = value.replace(/[^0-9]/g, '');
+                    const noPlusValue = allowedValue.replace('+', '');
                     const plusedValue = '+' + noPlusValue;
                     setFieldValue('phone', plusedValue);
                   }}
