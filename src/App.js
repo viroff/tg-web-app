@@ -384,7 +384,7 @@ const App = () => {
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0,9);
+                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0,8);
                     const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                     setFieldValue('mileage', dividedValue);
                   }}
