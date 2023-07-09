@@ -222,7 +222,7 @@ const App = () => {
           return (
             <div className="panel">
               <Form onSubmit={handleSubmit}
-                enctype='multipart/form-data'>
+                encType='multipart/form-data'>
                 <p className='agreement bottompadded'>Lorem ipsum dolor sit amet, consectetur
                   adipiscing elit, sed do eiusmod tempor incididunt ut labore et
                   dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
