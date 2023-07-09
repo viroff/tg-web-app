@@ -221,7 +221,8 @@ const App = () => {
           } = props;
           return (
             <div className="panel">
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit}
+                enctype='multipart/form-data'>
                 <p className='agreement bottompadded'>Lorem ipsum dolor sit amet, consectetur
                   adipiscing elit, sed do eiusmod tempor incididunt ut labore et
                   dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
@@ -384,7 +385,7 @@ const App = () => {
                   }}
                   onChange={async (e, data) => {
                     const { value } = data;
-                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0,8);
+                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0, 8);
                     const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                     setFieldValue('mileage', dividedValue);
                   }}
@@ -451,7 +452,7 @@ const App = () => {
                     }}
                     onChange={async (e, data) => {
                       const { value } = data;
-                      const noBsValue = value.replace(/[^0-9]/g, '').slice(0,8);
+                      const noBsValue = value.replace(/[^0-9]/g, '').slice(0, 8);
                       const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                       setFieldValue('price', dividedValue);
                     }}
@@ -527,7 +528,7 @@ const App = () => {
                   onChange={async (e, data) => {
                     const { value } = data;
                     const allowedValue = value.replace(/[^0-9]/g, '');
-                    const noPlusValue = allowedValue.replace('+', '').slice(0,14);
+                    const noPlusValue = allowedValue.replace('+', '').slice(0, 14);
                     const plusedValue = '+' + noPlusValue;
                     setFieldValue('phone', plusedValue);
                   }}
