@@ -1,7 +1,7 @@
 import React from 'react';
 import ImageUploading from 'react-images-uploading';
 import { Button, Image } from '@fluentui/react-components';
-import { DismissCircle32Filled, Add20Filled } from "@fluentui/react-icons";
+import { DismissCircle32Filled } from "@fluentui/react-icons";
 
 const FileUploader = (props) => {
     const maxNumber = 10;
@@ -12,7 +12,7 @@ const FileUploader = (props) => {
         <div className="Uploader">
             <ImageUploading
                 multiple
-                value={props.image}
+                value={props.images}
                 onChange={onChange}
                 acceptType={['png', 'jpg', 'jpeg']}
                 maxNumber={maxNumber}
@@ -44,14 +44,20 @@ const FileUploader = (props) => {
                         </div>
                         <div className="centerpanel">
                             <Button
-                                icon={<Add20Filled />}
                                 size="normal"
                                 style={isDragging ? { color: 'red' } : undefined}
                                 onClick={onImageUpload}
                                 {...dragProps}
                                 type='button'
                             >
-                                Добавить
+                                Загрузить...
+                            </Button>
+                            <Button
+                                disabled={imageList.length === 0}
+                                size="normal"
+                                onClick={onImageRemoveAll}
+                                type='button'>
+                                Очистить
                             </Button>
                         </div>
                     </>
