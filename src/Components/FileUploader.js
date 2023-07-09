@@ -11,6 +11,7 @@ const FileUploader = (props) => {
     return (
         <div className="Uploader">
             <ImageUploading
+                multiple
                 value={props.images}
                 onChange={onChange}
                 acceptType={['png', 'jpg', 'jpeg']}
@@ -27,7 +28,6 @@ const FileUploader = (props) => {
                     dragProps,
                 }) => (
                     <>
-                    {imageList.length}
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             {imageList.map((image, index) => (
