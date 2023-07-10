@@ -5,26 +5,25 @@ import { DismissCircle32Filled, Add20Filled } from "@fluentui/react-icons";
 import { getRandomId } from '../utils/getRandomId';
 
 const FileUploaderMultiple = (props) => {
-    const [images, setImages] = useState([]);
     const fileInputRef = useRef(null);
-
+    const maxImagesCount = 10;
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
                 const imageData = {
-                    id: images.length,
+                    id: props.images.length,
                     url: reader.result,
                 };
-                setImages((prevImages) => [...prevImages, imageData]);
+                props.setImages((prevImages) => [...prevImages, imageData]);
             };
             reader.readAsDataURL(file);
         }
     };
 
     const handleRemoveImage = (id) => {
-        setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+        props.setImages((prevImages) => prevImages.filter((image) => image.id !== id));
     };
 
     const handleUploadButtonClick = () => {
@@ -33,7 +32,7 @@ const FileUploaderMultiple = (props) => {
 
     return (
         <div>
-            {images.map((image) => {
+            {props.images.map((image) => {
                 const rndKey = getRandomId(image.id);
                 return (
                     <div key={rndKey}>
@@ -61,7 +60,7 @@ const FileUploaderMultiple = (props) => {
                 onChange={handleFileChange}
                 accept="image/*"
             />
-            {images.length < 10 &&
+            {props.images.length < maxImagesCount &&
                 <div className="centerpanel">
                     <Button
                         size="normal"

@@ -552,7 +552,8 @@ const App = () => {
                     type={'submit'} disabled={!(isValid && dirty && images.length > 0 && !isSubmitting)}>
                     Добавить объявление
                   </Button></div>
-
+                {'isValid dirty  images.length  isSubmitting'}
+                {isValid + ' ' + dirty + ' ' + images.length + ' ' + isSubmitting}
               </Form>
             </div>
           );
