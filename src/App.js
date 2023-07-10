@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import { getCountries, getCities } from './api/geoApi';
 import { getCurrencies } from './api/currencyApi';
-import FileUploader from './Components/FileUploader';
+import FileUploaderMultiple from './Components/FileUploaderMultiple';
 import { dataURLtoFile } from './utils/base64toFile';
 import { Button, Textarea, Divider, Select, Input } from '@fluentui/react-components';
 
@@ -475,7 +475,7 @@ const App = () => {
 
                 <div className='bottompadded' />
                 <Divider align="left" className='bottompadded'><b>Фотографии</b></Divider>
-                <FileUploader images={images} setImages={setImages} />
+                <FileUploaderMultiple images={images} setImages={setImages} />
                 <div className='bottompadded' />
                 <Divider align="left" className='bottompadded'><b>Место продажи</b></Divider>
                 <Select

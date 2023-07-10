@@ -3,7 +3,7 @@ import ImageUploading from 'react-images-uploading';
 import { Button, Image } from '@fluentui/react-components';
 import { DismissCircle32Filled } from "@fluentui/react-icons";
 
-const FileUploader = (props) => {
+const FileUploader_Multiple = (props) => {
     const maxNumber = 10;
     const onChange = (imageList, addUpdateIndex) => {
         props.setImages(imageList);
@@ -67,4 +67,4 @@ const FileUploader = (props) => {
     );
 };
 
-export default FileUploader;
+export default FileUploader_Multiple;
