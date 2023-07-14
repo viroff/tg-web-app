@@ -143,17 +143,17 @@ const App = () => {
     formData.append('generation', generation);
     formData.append('info', info);
     formData.append('mark', mark);
-    formData.append('mileage', mileage);
+    formData.append('mileage', mileage.replace(/\s/g, ''));
     formData.append('model', model);
     formData.append('modification', modification);
     formData.append('phone', phone);
     formData.append('sellingType', sellingType);
     formData.append('year', year);
-    formData.append('price', price);
+    formData.append('price', price.replace(/\s/g, ''));
     formData.append('currencyId', currencyId);
     formData.append('userId', mockinitDataUnsafe.user.id);
     images.forEach((image) => {
-      formData.append('files', image);
+      formData.append('files', dataURLtoFile(image.url, image.id));
     });
     await fetch('http://localhost:5007/api/poster', {
       method: 'POST',
@@ -204,7 +204,7 @@ const App = () => {
   });
   return (
     <div className='App'>
-      <form>
+      <form onSubmit={e => { e.preventDefault(); }}>
         <div className="panel">
           <p className='agreement bottompadded'>Lorem ipsum dolor sit amet, consectetur
             adipiscing elit, sed do eiusmod tempor incididunt ut labore et
