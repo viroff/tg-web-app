@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
-import { Formik, Form, Field } from 'formik';
+import * as yup from 'yup';
+import { Formik, useFormik, Field } from 'formik';
 import { getCountries, getCities } from './api/geoApi';
 import { getCurrencies } from './api/currencyApi';
 import FileUploaderMultiple from './Components/FileUploaderMultiple';
@@ -101,7 +102,6 @@ const App = () => {
   }, []);
 
   const submitPoster = async (values) => {
-
     const { city,
       condition,
       configuration,
@@ -116,7 +116,7 @@ const App = () => {
       sellingType,
       year,
       price,
-      currency,
+      currencyId,
       modelText,
       generationText,
       configurationText,
@@ -135,7 +135,6 @@ const App = () => {
       auth_date: "1687722413",
       hash: "7cdfb7a3b7235d77e2628ceb8abf32562a9a9bff33e941674de4dc68b82d29f7"
     };
-
     const formData = new FormData();
     formData.append('city', city);
     formData.append('condition', condition);
@@ -151,14 +150,11 @@ const App = () => {
     formData.append('sellingType', sellingType);
     formData.append('year', year);
     formData.append('price', price);
-    formData.append('currencyId', currency.id);
+    formData.append('currencyId', currencyId);
     formData.append('userId', mockinitDataUnsafe.user.id);
     images.forEach((image) => {
-      formData.append('files', dataURLtoFile(image.data, image.file.name));
+      formData.append('files', image);
     });
-    console.log(tgApp);
-    console.log("modelText:" + modelText + " generationText:" + generationText + " configurationText:" + configurationText + " modificationText" + modificationText);
-    console.log(formData);
     await fetch('http://localhost:5007/api/poster', {
       method: 'POST',
       body: formData,
@@ -167,374 +163,361 @@ const App = () => {
       },
     });
   };
+
+  const validationSchema = yup.object({
+    phone: yup.string().min(8, 'Укажите телефон в международном формате')
+      .required('Password is required'),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      models: [],
+      generations: [],
+      configurations: [],
+      modifications: [],
+      years: [],
+      cities: [],
+      condition: '',
+      sellingType: '',
+      year: '',
+      mark: {},
+      markText: '',
+      model: {},
+      modelText: '',
+      generation: {},
+      generationText: '',
+      configuration: {},
+      configurationText: '',
+      modification: '',
+      modificationText: '',
+      state: '',
+      mileage: '',
+      sellingMethod: '',
+      info: ' ',
+      country: '',
+      city: '',
+      price: '',
+      currencyId: 0,
+      phone: '',
+    },
+    validationSchema: validationSchema,
+  });
   return (
     <div className='App'>
-      <Formik
-        initialValues={{
-          models: [],
-          generations: [],
-          configurations: [],
-          modifications: [],
-          years: [],
-          cities: [],
-          condition: '',
-          sellingType: '',
-          year: '',
-          mark: {},
-          markText: '',
-          model: {},
-          modelText: '',
-          generation: {},
-          generationText: '',
-          configuration: {},
-          configurationText: '',
-          modification: {},
-          modificationText: '',
-          state: '',
-          mileage: '',
-          sellingMethod: '',
-          info: ' ',
-          country: '',
-          city: '',
-          price: '',
-          currencyId: 0,
-          currency: '',
-          phone: '',
-        }}
-        onSubmit={submitPoster}
-      >
-        {props => {
-          const {
-            values,
-            dirty,
-            isSubmitting,
-            isValid,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            handleReset,
-            setFieldValue,
-            setErrors,
-            setFieldTouched
-          } = props;
-          return (
-            <div className="panel">
-              <Form onSubmit={handleSubmit}
-                encType='multipart/form-data'>
-                <p className='agreement bottompadded'>Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                  ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                  in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-                  anim id est laborum.</p>
-                <Divider align="left" className='bottompadded'><b>Автомобиль</b></Divider>
-                <Select
-                  id='mark'
-                  name='mark'
-                  value={values.mark}
-                  //filter
-                  //showFilterClear
-                  // showOnFocus
-                  //validate={validateMark}
-                  filterInputAutoFocus={false}
-                  optionLabel="name"
-                  onChange={async e => {
-                    const { value } = e.target;
-                    const models = await getModels(value);
-                    setFieldValue('mark', value);
-                    setFieldValue('markText', getOptionText(e.target));
-                    setFieldValue('models', models);
+      <form>
+        <div className="panel">
+          <p className='agreement bottompadded'>Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.</p>
+          <Divider align="left" className='bottompadded'><b>Автомобиль</b></Divider>
+          <Select
+            id='mark'
+            name='mark'
+            value={formik.values.mark}
+            //filter
+            //showFilterClear
+            // showOnFocus
+            //validate={validateMark}
+            filterInputAutoFocus={false}
+            optionLabel="name"
+            onChange={async e => {
+              const { value } = e.target;
+              const models = await getModels(value);
+              formik.setFieldValue('mark', value);
+              formik.setFieldValue('markText', getOptionText(e.target));
+              formik.setFieldValue('models', models);
 
-                    setFieldValue('model', '');
-                    setFieldValue('generation', '');
-                    setFieldValue('configuration', '');
-                    setFieldValue('modification', '');
-                    setFieldValue('year', '');
+              formik.setFieldValue('model', '');
+              formik.setFieldValue('generation', '');
+              formik.setFieldValue('configuration', '');
+              formik.setFieldValue('modification', '');
+              formik.setFieldValue('year', '');
 
-                    setFieldValue('generations', []);
-                    setFieldValue('configurations', []);
-                    setFieldValue('modifications', []);
-                    setFieldValue('years', []);
-                  }}
-                >
-                  <option value='' hidden>Выберите марку</option>
-                  {marks.map((mark) => (<option key={'mark_' + mark.id} value={mark.id}>{mark.name}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Select
-                  disabled={values.models.length === 0}
-                  id='model'
-                  name='model'
-                  value={values.model}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    const generations = await getGenerations(values.mark, value);
-                    setFieldValue('model', value);
-                    setFieldValue('modelText', getOptionText(e.target));
-                    setFieldValue('generations', generations);
+              formik.setFieldValue('generations', []);
+              formik.setFieldValue('configurations', []);
+              formik.setFieldValue('modifications', []);
+              formik.setFieldValue('years', []);
+            }}
+          >
+            <option value='' hidden>Выберите марку</option>
+            {marks.map((mark) => (<option key={'mark_' + mark.id} value={mark.id}>{mark.name}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Select
+            disabled={formik.values.models.length === 0}
+            id='model'
+            name='model'
+            value={formik.values.model}
+            onChange={async e => {
+              const { value } = e.target;
+              const generations = await getGenerations(formik.values.mark, value);
+              formik.setFieldValue('model', value);
+              formik.setFieldValue('modelText', getOptionText(e.target));
+              formik.setFieldValue('generations', generations);
 
-                    setFieldValue('generation', '');
-                    setFieldValue('configuration', '');
-                    setFieldValue('modification', '');
-                    setFieldValue('year', '');
+              formik.setFieldValue('generation', '');
+              formik.setFieldValue('configuration', '');
+              formik.setFieldValue('modification', '');
+              formik.setFieldValue('year', '');
 
-                    setFieldValue('configurations', []);
-                    setFieldValue('modifications', []);
-                    setFieldValue('years', []);
-                  }}
-                >
-                  <option value='' hidden>Выберите модель</option>
-                  {values.models.map((model) => (<option key={'model_' + model.id} value={model.id}>{model.name}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Select
-                  disabled={values.generations.length === 0}
-                  id='generation'
-                  name='generation'
-                  value={values.generation}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    const configurations = await getConfigurations(values.mark, values.model, value);
-                    setFieldValue('generation', value);
-                    setFieldValue('generationText', getOptionText(e.target));
-                    setFieldValue('configurations', configurations);
+              formik.setFieldValue('configurations', []);
+              formik.setFieldValue('modifications', []);
+              formik.setFieldValue('years', []);
+            }}
+          >
+            <option value='' hidden>Выберите модель</option>
+            {formik.values.models.map((model) => (<option key={'model_' + model.id} value={model.id}>{model.name}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Select
+            disabled={formik.values.generations.length === 0}
+            id='generation'
+            name='generation'
+            value={formik.values.generation}
+            onChange={async e => {
+              const { value } = e.target;
+              const configurations = await getConfigurations(formik.values.mark, formik.values.model, value);
+              formik.setFieldValue('generation', value);
+              formik.setFieldValue('generationText', getOptionText(e.target));
+              formik.setFieldValue('configurations', configurations);
 
-                    setFieldValue('configuration', '');
-                    setFieldValue('modification', '');
-                    setFieldValue('year', '');
+              formik.setFieldValue('configuration', '');
+              formik.setFieldValue('modification', '');
+              formik.setFieldValue('year', '');
 
-                    setFieldValue('modifications', []);
-                    setFieldValue('years', []);
-                  }}>
-                  <option value='' hidden>Выберите поколение</option>
-                  {values.generations.map(generation => (<option key={'gen_' + generation.id} value={generation.id}>{getGenerationName(generation)}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Select
-                  disabled={values.configurations.length === 0}
-                  id='configuration'
-                  name='configuration'
-                  value={values.configuration}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    const modifications = getModifications(values.configurations, value);
-                    setFieldValue('configuration', value);
-                    setFieldValue('configurationText', getOptionText(e.target));
-                    setFieldValue('modifications', modifications);
+              formik.setFieldValue('modifications', []);
+              formik.setFieldValue('years', []);
+            }}>
+            <option value='' hidden>Выберите поколение</option>
+            {formik.values.generations.map(generation => (<option key={'gen_' + generation.id} value={generation.id}>{getGenerationName(generation)}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Select
+            disabled={formik.values.configurations.length === 0}
+            id='configuration'
+            name='configuration'
+            value={formik.values.configuration}
+            onChange={async e => {
+              const { value } = e.target;
+              const modifications = getModifications(formik.values.configurations, value);
+              formik.setFieldValue('configuration', value);
+              formik.setFieldValue('configurationText', getOptionText(e.target));
+              formik.setFieldValue('modifications', modifications);
 
-                    setFieldValue('modification', '');
-                    setFieldValue('year', '');
+              formik.setFieldValue('modification', '');
+              formik.setFieldValue('year', '');
 
-                    setFieldValue('years', []);
-                  }}>
-                  <option value='' hidden>Выберите конфигурацию</option>
-                  {values.configurations.map(configuration => (<option key={'con_' + configuration.id} value={configuration.id}>{getConfigurationName(configuration)}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Select
-                  disabled={values.modifications.length === 0}
-                  id='modification'
-                  name='modification'
-                  value={values.modification}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    const years = getGenerationYears(values.generations, values.generation);
-                    setFieldValue('modification', value);
-                    setFieldValue('modificationText', getOptionText(e.target));
-                    setFieldValue('years', years);
+              formik.setFieldValue('years', []);
+            }}>
+            <option value='' hidden>Выберите конфигурацию</option>
+            {formik.values.configurations.map(configuration => (<option key={'con_' + configuration.id} value={configuration.id}>{getConfigurationName(configuration)}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Select
+            disabled={formik.values.modifications.length === 0}
+            id='modification'
+            name='modification'
+            value={formik.values.modification}
+            onChange={async e => {
+              const { value } = e.target;
+              const years = getGenerationYears(formik.values.generations, formik.values.generation);
+              formik.setFieldValue('modification', value);
+              formik.setFieldValue('modificationText', getOptionText(e.target));
+              formik.setFieldValue('years', years);
 
-                    setFieldValue('year', '');
-                  }}>
-                  <option value='' hidden>Выберите модификацию</option>
-                  {values.modifications.map(modification => (<option key={'mod_' + modification['complectation-id']} value={modification}>{getModificationName(modification)}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Select
-                  disabled={values.years.length === 0}
-                  id='year'
-                  name='year'
-                  value={values.year}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('year', value);
-                  }}>
-                  <option value='' hidden>Выберите год выпуска</option>
-                  {values.years.map(year => (<option key={'years_' + year} value={year}>{year}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Input
-                  className='fullwidth'
-                  disabled={values.year === ''}
-                  id='mileage'
-                  name='mileage'
-                  placeholder='Пробег'
-                  contentAfter={'км.'}
-                  value={values.mileage}
-                  onKeyDown={async (e, data) => {
-                    const allowedChars = /^[0-9]+$/;
-                    const inputValue = e.target.value;
-                    const isNotBs = e.key !== 'Backspace';
-                    if (!allowedChars.test(e.key) && isNotBs) {
-                      e.preventDefault();
-                    } else if (inputValue.length > 9 && isNotBs) {
-                      e.preventDefault();
-                    }
-                  }}
-                  onChange={async (e, data) => {
-                    const { value } = data;
-                    const noBsValue = value.replace(/[^0-9]/g, '').slice(0, 8);
-                    const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                    setFieldValue('mileage', dividedValue);
-                  }}
-                />
-                <div className='bottompadded' />
-                <Select
-                  disabled={conditions.length === 0 || values.mileage === ''}
-                  id='condition'
-                  name='condition'
-                  value={values.condition}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('condition', value);
-                  }}>
-                  <option value='' hidden>Состояние</option>
-                  {conditions.map(condition => (<option key={'condition_' + condition.id} value={condition.id}>{condition.name}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Divider align="left" className='bottompadded'><b>Параметры предложения</b></Divider>
-                <Select
-                  disabled={sellingTypes.length === 0 || values.condition === ''}
-                  id='sellingtype'
-                  name='sellingtype'
-                  value={values.sellingType}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('sellingType', value);
-                  }}>
-                  <option value='' hidden>Тип продажи</option>
-                  {sellingTypes.map(st => (<option key={'st_' + st.id} value={st.id}>{st.name}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Textarea
-                  className='fullwidth'
-                  disabled={values.sellingType === ''}
-                  id='info'
-                  name='info'
-                  rows={5} cols={30}
-                  maxLength='256'
-                  placeholder='Дополнительная информация'
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('info', value);
-                  }}
-                  value={values.info}
-                />
-                <div className='bottompadded' />
-                <div className="inoneline">
-                  <Input
-                    disabled={currencies.length === 0 || values.sellingType === ''}
-                    id='price'
-                    name='price'
-                    value={values.price}
-                    placeholder='Цена'
-                    onKeyDown={async e => {
-                      const allowedChars = /^[0-9]+$/;
-                      const inputValue = e.target.value;
-                      const isNotBs = e.key !== 'Backspace';
-                      if (!allowedChars.test(e.key) && isNotBs) {
-                        e.preventDefault();
-                      } else if (inputValue.length > 9 && isNotBs) {
-                        e.preventDefault();
-                      }
-                    }}
-                    onChange={async (e, data) => {
-                      const { value } = data;
-                      const noBsValue = value.replace(/[^0-9]/g, '').slice(0, 8);
-                      const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                      setFieldValue('price', dividedValue);
-                    }}
-                  />
-                  <div className='bottompadded' />
-                  <Select
-                    disabled={currencies.length === 0 || values.sellingType === ''}
-                    id='currencyId'
-                    name='currencyId'
-                    as='select'
-                    value={isObjectEmpty(values.currency) ? currencies[0] : values.currency}
-                    onChange={async e => {
-                      const { value } = e.target;
-                      setFieldValue('currency', value);
-                    }}>
-                    {currencies.map(curr => (<option key={'curr_' + curr.id} value={curr.id}>{curr.isoName}</option>))}
-                  </Select>
-                </div>
-                <div className='bottompadded' />
+              formik.setFieldValue('year', '');
+            }}>
+            <option value='' hidden>Выберите модификацию</option>
+            {formik.values.modifications.map(modification => (<option key={'mod_' + modification['complectation-id']} value={modification['complectation-id']}>{getModificationName(modification)}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Select
+            disabled={formik.values.years.length === 0}
+            id='year'
+            name='year'
+            value={formik.values.year}
+            onChange={async e => {
+              const { value } = e.target;
+              formik.setFieldValue('year', value);
+            }}>
+            <option value='' hidden>Выберите год выпуска</option>
+            {formik.values.years.map(year => (<option key={'years_' + year} value={year}>{year}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Input
+            className='fullwidth'
+            disabled={formik.values.year === ''}
+            id='mileage'
+            name='mileage'
+            placeholder='Пробег'
+            contentAfter={'км.'}
+            value={formik.values.mileage}
+            onKeyDown={async (e, data) => {
+              const allowedChars = /^[0-9]+$/;
+              const inputValue = e.target.value;
+              const isNotBs = e.key !== 'Backspace';
+              if (!allowedChars.test(e.key) && isNotBs) {
+                e.preventDefault();
+              } else if (inputValue.length > 9 && isNotBs) {
+                e.preventDefault();
+              }
+            }}
+            onChange={async (e, data) => {
+              const { value } = data;
+              const noBsValue = value.replace(/[^0-9]/g, '').slice(0, 8);
+              const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+              formik.setFieldValue('mileage', dividedValue);
+            }}
+          />
+          <div className='bottompadded' />
+          <Select
+            disabled={conditions.length === 0 || formik.values.mileage === ''}
+            id='condition'
+            name='condition'
+            value={formik.values.condition}
+            onChange={async e => {
+              const { value } = e.target;
+              formik.setFieldValue('condition', value);
+            }}>
+            <option value='' hidden>Состояние</option>
+            {conditions.map(condition => (<option key={'condition_' + condition.id} value={condition.id}>{condition.name}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Divider align="left" className='bottompadded'><b>Параметры предложения</b></Divider>
+          <Select
+            disabled={sellingTypes.length === 0 || formik.values.condition === ''}
+            id='sellingtype'
+            name='sellingtype'
+            value={formik.values.sellingType}
+            onChange={async e => {
+              const { value } = e.target;
+              formik.setFieldValue('sellingType', value);
+            }}>
+            <option value='' hidden>Тип продажи</option>
+            {sellingTypes.map(st => (<option key={'st_' + st.id} value={st.id}>{st.name}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Textarea
+            className='fullwidth'
+            disabled={formik.values.sellingType === ''}
+            id='info'
+            name='info'
+            rows={5} cols={30}
+            maxLength='256'
+            placeholder='Дополнительная информация'
+            onChange={async e => {
+              const { value } = e.target;
+              formik.setFieldValue('info', value);
+            }}
+            value={formik.values.info}
+          />
+          <div className='bottompadded' />
+          <div className="inoneline">
+            <Input
+              disabled={currencies.length === 0 || formik.values.sellingType === ''}
+              id='price'
+              name='price'
+              value={formik.values.price}
+              placeholder='Цена'
+              onKeyDown={async e => {
+                const allowedChars = /^[0-9]+$/;
+                const inputValue = e.target.value;
+                const isNotBs = e.key !== 'Backspace';
+                if (!allowedChars.test(e.key) && isNotBs) {
+                  e.preventDefault();
+                } else if (inputValue.length > 9 && isNotBs) {
+                  e.preventDefault();
+                }
+              }}
+              onChange={async (e, data) => {
+                const { value } = data;
+                const noBsValue = value.replace(/[^0-9]/g, '').slice(0, 8);
+                const dividedValue = noBsValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                formik.setFieldValue('price', dividedValue);
+              }}
+            />
+            <div className='bottompadded' />
+            <Select
+              disabled={currencies.length === 0 || formik.values.sellingType === ''}
+              id='currencyId'
+              name='currencyId'
+              as='select'
+              value={formik.values.currencyId}
+              onChange={async e => {
+                const { value } = e.target;
+                formik.setFieldValue('currencyId', value);
+              }}>
+              {currencies.map(curr => (<option key={'curr_' + curr.id} value={curr.id}>{curr.isoName}</option>))}
+            </Select>
+          </div>
+          <div className='bottompadded' />
 
-                <div className='bottompadded' />
-                <Divider align="left" className='bottompadded'><b>Фотографии</b></Divider>
-                <FileUploaderMultiple images={images} setImages={setImages} />
-                <div className='bottompadded' />
-                <Divider align="left" className='bottompadded'><b>Место продажи</b></Divider>
-                <Select
-                  disabled={countries.length === 0 || values.price === ''}
-                  id='country'
-                  name='country'
-                  value={values.country}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('country', value);
-                    const cities = await getCities(value);
-                    setFieldValue('cities', cities);
-                    setFieldValue('city', '');
-                  }}>
-                  <option value='' hidden>Страна</option>
-                  {countries.map(cntr => (<option key={'cntr_' + cntr.id} value={cntr.id}>{cntr.name}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Select
-                  disabled={values.cities.length === 0 || values.country === ''}
-                  id='city'
-                  name='city'
-                  value={values.city}
-                  onChange={async e => {
-                    const { value } = e.target;
-                    setFieldValue('city', value);
-                  }}>
-                  <option value='' hidden>Город</option>
-                  {values.cities.map(city => (<option key={'city_' + city.id} value={city.id}>{city.name}</option>))}
-                </Select>
-                <div className='bottompadded' />
-                <Divider align="left" className='bottompadded'><b>Контактная информация</b></Divider>
-                <Input
-                  className='fullwidth'
-                  disabled={values.city === ''}
-                  id='phone'
-                  name='phone'
-                  value={values.phone}
-                  placeholder='Телефон в международном формате'
-                  onKeyDown={async e => {
-                    const allowedChars = /^[0-9]+$/;
-                    const inputValue = e.target.value;
-                    const isNotBs = e.key !== 'Backspace';
-                    if (!allowedChars.test(e.key) && isNotBs) {
-                      e.preventDefault();
-                    } else if (inputValue.length > 16 && isNotBs) {
-                      e.preventDefault();
-                    }
-                  }}
-                  onChange={async (e, data) => {
-                    const { value } = data;
-                    const allowedValue = value.replace(/[^0-9]/g, '');
-                    const noPlusValue = allowedValue.replace('+', '').slice(0, 14);
-                    const plusedValue = '+' + noPlusValue;
-                    setFieldValue('phone', plusedValue);
-                  }}
-                />
-                <div className='bottompadded' />
-                {/* <Button
+          <div className='bottompadded' />
+          <Divider align="left" className='bottompadded'><b>Фотографии</b></Divider>
+          <FileUploaderMultiple images={images} setImages={setImages} />
+          <div className='bottompadded' />
+          <Divider align="left" className='bottompadded'><b>Место продажи</b></Divider>
+          <Select
+            disabled={countries.length === 0 || formik.values.price === ''}
+            id='country'
+            name='country'
+            value={formik.values.country}
+            onChange={async e => {
+              const { value } = e.target;
+              formik.setFieldValue('country', value);
+              const cities = await getCities(value);
+              formik.setFieldValue('cities', cities);
+              formik.setFieldValue('city', '');
+            }}>
+            <option value='' hidden>Страна</option>
+            {countries.map(cntr => (<option key={'cntr_' + cntr.id} value={cntr.id}>{cntr.name}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Select
+            disabled={formik.values.cities.length === 0 || formik.values.country === ''}
+            id='city'
+            name='city'
+            value={formik.values.city}
+            onChange={async e => {
+              const { value } = e.target;
+              formik.setFieldValue('city', value);
+            }}>
+            <option value='' hidden>Город</option>
+            {formik.values.cities.map(city => (<option key={'city_' + city.id} value={city.id}>{city.name}</option>))}
+          </Select>
+          <div className='bottompadded' />
+          <Divider align="left" className='bottompadded'><b>Контактная информация</b></Divider>
+          <Input
+            className='fullwidth'
+            disabled={formik.values.city === ''}
+            id='phone'
+            name='phone'
+            value={formik.values.phone}
+            placeholder='Телефон в международном формате'
+            onKeyDown={async e => {
+              const allowedChars = /^[0-9]+$/;
+              const inputValue = e.target.value;
+              const isNotBs = e.key !== 'Backspace';
+              if (!allowedChars.test(e.key) && isNotBs) {
+                e.preventDefault();
+              } else if (inputValue.length > 16 && isNotBs) {
+                e.preventDefault();
+              }
+            }}
+            onChange={async (e, data) => {
+              const { value } = data;
+              const allowedValue = value.replace(/[^0-9]/g, '');
+              const noPlusValue = allowedValue.replace('+', '').slice(0, 14);
+              const plusedValue = '+' + noPlusValue;
+              formik.setFieldValue('phone', plusedValue);
+            }}
+          />
+          <div className='bottompadded' />
+          {/* <Button
                   size="small"
                   type="button"
                   className="outline"
@@ -543,41 +526,21 @@ const App = () => {
                 >
                   Reset
                 </Button> */}
-                <Divider />
-                <div className='bottompadded' />
-                <div className="centerpanel">
-                  <Button
-                    size="normal"
-                    severity="success"
-                    type={'submit'} disabled={!(isValid && dirty && images.length > 0 && !isSubmitting)}>
-                    Добавить объявление
-                  </Button></div>
-                {'isValid dirty  images.length  isSubmitting'}
-                {isValid + ' ' + dirty + ' ' + images.length + ' ' + isSubmitting}
-              </Form>
-            </div>
-          );
-        }}
-
-      </Formik>
+          <Divider />
+          <div className='bottompadded' />
+          <div className="centerpanel">
+            <Button
+              size="normal"
+              severity="success"
+              onClick={() => submitPoster(formik.values)}
+              type={'submit'} disabled={!(formik.isValid && formik.dirty && images.length > 0 && !formik.isSubmitting)}>
+              Добавить объявление
+            </Button></div>
+          {/* {'isValid dirty  images.length  isSubmitting'}
+          <br/>
+          {formik.isValid + ' ' + formik.dirty + ' ' + images.length + ' ' + formik.isSubmitting} */}
+        </div>
+      </form>
     </div>)
 }
 export default App;
-
-
-/*
-<br />
-<label className={classnames(styles.label, { [styles.errorLabel]: errors.Year && touched.Year })}>
-  Год выпуска
-</label>
-<Field as='select' className={classnames(styles.field, { [styles.errorInput]: errors.Year && touched.Year })}
-  name='Year'
-  validate={validateYear}>
-  <option selected value='-1'>Выберите год выпуска</option>
-  <option value='2023'>2023</option>
-  <option value='2022'>2022</option>
-  <option value='2021'>2021</option>
-</Field>
-{errors.Year && touched.Year && <div className={styles.error}>{errors.Year}</div>}
-<br />
-*/

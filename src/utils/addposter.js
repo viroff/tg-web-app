@@ -141,6 +141,14 @@ export const getModifications = (configurations, selectedConfiguration) => {
     }
 };
 
+// export const getSelectedModification = (target) => {
+//     try {
+//         return (target.options[target.selectedIndex].text);
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+
 // fill years
 export const getGenerationYears = (generations, selectedGeneration) => {
     if (!generations || generations.length === 0 || selectedGeneration === '') {

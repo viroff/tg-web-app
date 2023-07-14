@@ -24,7 +24,8 @@
     "react-images-uploading": "^3.1.7",
     "react-phone-number-input": "^3.2.23",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

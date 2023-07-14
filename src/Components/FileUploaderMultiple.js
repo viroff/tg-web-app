@@ -19,6 +19,7 @@ const FileUploaderMultiple = (props) => {
                 props.setImages((prevImages) => [...prevImages, imageData]);
             };
             reader.readAsDataURL(file);
+            console.log('IMG LENGTH:'+props.images.length)
         }
     };
 
