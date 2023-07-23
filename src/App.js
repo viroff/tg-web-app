@@ -155,7 +155,8 @@ const App = () => {
     images.forEach((image) => {
       formData.append('files', dataURLtoFile(image.url, image.id));
     });
-    await fetch('http://localhost:5007/api/poster', {
+    //await fetch('http://localhost:5007/api/poster', {
+    await fetch('https://5fbb-94-19-146-12.ngrok-free.app/api/poster', {
       method: 'POST',
       body: formData,
       headers: {
