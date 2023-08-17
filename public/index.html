@@ -30,6 +30,20 @@
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
+  <input type='file'  id='videoUpload' />
+
+<video width="320" height="240" controls>
+  Your browser does not support the video tag.
+</video>
+
+<script>
+document.getElementById("videoUpload")
+.onchange = function(event) {
+  let file = event.target.files[0];
+  let blobURL = URL.createObjectURL(file);
+  document.querySelector("video").src = blobURL;
+}
+</script>
   <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
