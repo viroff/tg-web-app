@@ -41,7 +41,7 @@ const FileUploaderMultiple = (props) => {
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             <div key={'dwx' + rndKey} className='imgcontainer'>
-                                {mediaType === 'video' && <video key={'vidd' + rndKey} src={image.url} width='290' controls/>}
+                                {mediaType === 'video' && <video key={'vidd' + rndKey} src={image.url} width='290' controls muted preload='auto'/>}
                                 {mediaType === 'image' && <Image key={'imgg' + rndKey} src={image.url} width='290' />}
                                 <Button
                                     appearance='transparent'
