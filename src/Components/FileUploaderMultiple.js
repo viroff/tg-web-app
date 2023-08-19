@@ -19,7 +19,7 @@ const FileUploaderMultiple = (props) => {
                 props.setImages((prevImages) => [...prevImages, imageData]);
             };
             reader.readAsDataURL(file);
-            console.log('IMG LENGTH:'+props.images.length)
+            console.log('IMG LENGTH:' + props.images.length)
         }
     };
 
@@ -35,12 +35,14 @@ const FileUploaderMultiple = (props) => {
         <div>
             {props.images.map((image) => {
                 const rndKey = getRandomId(image.id);
+                const mediaType = image.url.split(';')[0].split('/')[0].split(':')[1];
                 return (
                     <div key={rndKey}>
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             <div key={'dwx' + rndKey} className='imgcontainer'>
-                                <Image key={'imgg' + rndKey} src={image.url} width='290' />
+                                {mediaType === 'video' && <video key={'vidd' + rndKey} src={image.url} width='290' />}
+                                {mediaType === 'image' && <Image key={'imgg' + rndKey} src={image.url} width='290' />}
                                 <Button
                                     appearance='transparent'
                                     key={'bsd' + rndKey}
@@ -59,7 +61,7 @@ const FileUploaderMultiple = (props) => {
                 type="file"
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
-                accept="image/*"
+                accept="image/*, video/*"
             />
             {props.images.length < maxImagesCount &&
                 <div className="centerpanel">
