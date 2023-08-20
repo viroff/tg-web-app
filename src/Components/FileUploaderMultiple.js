@@ -4,7 +4,7 @@ import { Button, Image } from '@fluentui/react-components';
 import { DismissCircle32Filled, Add20Filled } from "@fluentui/react-icons";
 import { getRandomId } from '../utils/getRandomId';
 import ReactPlayer from 'react-player'
-import Video from 'react-native-video';
+
 
 const FileUploaderMultiple = (props) => {
     const fileInputRef = useRef(null);
@@ -43,14 +43,7 @@ const FileUploaderMultiple = (props) => {
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             <div key={'dwx' + rndKey} className='imgcontainer'>
-                                {mediaType === 'video' && <Video
-                                    source={{ uri: image.url }}
-                                    ref={player}
-                                    paused={true}
-                                    onLoad={() => {
-                                        player.current.seek(1); // this will set first frame of video as thumbnail
-                                    }}
-                                />}
+                                {mediaType === 'video' && <p></p>}
 
                                 {mediaType === 'image' && <Image key={'imgg' + rndKey} src={image.url} width='290' />}
                                 <Button
