@@ -5,7 +5,6 @@ import { DismissCircle32Filled, Add20Filled } from "@fluentui/react-icons";
 import { getRandomId } from '../utils/getRandomId';
 import ReactPlayer from 'react-player'
 
-
 const FileUploaderMultiple = (props) => {
     const fileInputRef = useRef(null);
     const maxImagesCount = 10;
@@ -32,7 +31,7 @@ const FileUploaderMultiple = (props) => {
     const handleUploadButtonClick = () => {
         fileInputRef.current.click();
     };
-    const player = useRef(null);
+
     return (
         <div>
             {props.images.map((image) => {
@@ -43,8 +42,7 @@ const FileUploaderMultiple = (props) => {
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             <div key={'dwx' + rndKey} className='imgcontainer'>
-                                {mediaType === 'video' && <p></p>}
-
+                                {mediaType === 'video' && <ReactPlayer played muted controls key={'vidd' + rndKey} url={image.url}  width='290' />}
                                 {mediaType === 'image' && <Image key={'imgg' + rndKey} src={image.url} width='290' />}
                                 <Button
                                     appearance='transparent'
