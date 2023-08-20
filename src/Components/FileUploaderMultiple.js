@@ -48,7 +48,7 @@ const FileUploaderMultiple = (props) => {
                                     ref={player}
                                     paused={true}
                                     onLoad={() => {
-                                        player.current.seek(10); // this will set first frame of video as thumbnail
+                                        player.current.seek(1); // this will set first frame of video as thumbnail
                                     }}
                                 />}
 
