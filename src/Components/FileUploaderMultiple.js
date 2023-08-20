@@ -3,6 +3,7 @@ import { React, useState, useRef } from 'react';
 import { Button, Image } from '@fluentui/react-components';
 import { DismissCircle32Filled, Add20Filled } from "@fluentui/react-icons";
 import { getRandomId } from '../utils/getRandomId';
+import ReactPlayer from 'react-player'
 
 const FileUploaderMultiple = (props) => {
     const fileInputRef = useRef(null);
@@ -41,7 +42,8 @@ const FileUploaderMultiple = (props) => {
                         <div className='row-divider' />
                         <div className="centerpanel panel column">
                             <div key={'dwx' + rndKey} className='imgcontainer'>
-                                {mediaType === 'video' && <video key={'vidd' + rndKey} src={image.url} width='290' controls muted preload='auto'/>}
+                                {mediaType === 'video' && <ReactPlayer ey={'vidd' + rndKey} url={image.url}  width='290' />}
+                                
                                 {mediaType === 'image' && <Image key={'imgg' + rndKey} src={image.url} width='290' />}
                                 <Button
                                     appearance='transparent'
