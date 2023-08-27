@@ -95,6 +95,7 @@ export const getModels = async (selectedMark) => {
         return [];
     }
     try {
+        //const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}?key=941092125`);
         const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}?key=941092125`);
         return safeGetData(resp.json());
     } catch (error) {
@@ -108,6 +109,7 @@ export const getGenerations = async (selectedMark, selectedModel) => {
         return [];
     }
     try {
+        //const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}?key=941092125`);
         const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}?key=941092125`);
         return safeGetData(resp.json());
     } catch (error) {
@@ -121,6 +123,7 @@ export const getConfigurations = async (selectedMark, selectedModel, selectedGen
         return [];
     }
     try {
+        //const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}/${selectedGeneration}?key=941092125`);
         const resp = await fetch(`https://cars-base.ru/api/cars/${selectedMark}/${selectedModel}/${selectedGeneration}?key=941092125`);
         return safeGetData(resp.json());
     } catch (error) {
