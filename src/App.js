@@ -63,7 +63,8 @@ const App = () => {
 
   // fill marks
   useEffect(() => {
-    fetch('https://cars-base.ru/api/cars')
+    //fetch('https://cars-base.ru/api/cars')
+    fetch('https://localhost:7007/api/v1.0/vehicles/marks')
       .then(response => response.json())
       .then(data => safeSetData(data, setMarks, []))
       .catch(error => console.log(error));
@@ -156,7 +157,7 @@ const App = () => {
       formData.append('files', dataURLtoFile(image.url, image.id));
     });
     //await fetch('https://5fbb-94-19-146-12.ngrok-free.app/api/poster', {
-    await fetch('http://localhost:5007/api/poster', {
+    await fetch('https://localhost:7007/api/v1.0/posters', {
       method: 'POST',
       body: formData,
       headers: {
