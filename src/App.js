@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import * as yup from 'yup';
 import { Formik, useFormik, Field } from 'formik';
-import { getCountries, getCities } from './api/geoApi';
+import { getCities } from './api/geoApi';
 import { getCurrencies } from './api/currencyApi';
 import FileUploaderMultiple from './Components/FileUploaderMultiple';
 import { dataURLtoFile } from './utils/base64toFile';
@@ -21,7 +21,8 @@ import {
   getConfigurations,
   getGenerationYears,
   isObjectEmpty,
-  getOptionText
+  getOptionText,
+  getCountries
 } from './utils/addposter';
 
 import {
@@ -50,6 +51,7 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [images, setImages] = useState([]);
+  const [citySuggestions, setCitySuggestions] = useState([]);
   const [tgApp, setTg] = useState(window.Telegram.WebApp);  // tg init
 
 
@@ -101,7 +103,22 @@ const App = () => {
     };
     getCurrenciesInternal();
   }, []);
+///////////////////////////////////////sgss test start////////////////////////////////////
+  // const onChange = (newText) => {
+  //   if (!newText || newText.trim() === "") {
+  //     setCitySuggestions(undefined);
+  //   } else {
+  //     setCitySuggestions(
+  //       heroes.filter((hero) =>
+  //         hero.toLowerCase().includes(newText.toLowerCase())
+  //       ));
+  //   }
+  // };
 
+  // const onSuggestionClicked = (suggestion) => {
+  //   alert(typeof suggestion === "string" ? suggestion : suggestion.getSearchText());
+  // };
+///////////////////////////////////////sgss test end////////////////////////////////////
   const submitPoster = async (values) => {
     const { city,
       condition,
@@ -169,7 +186,7 @@ const App = () => {
 
   const validationSchema = yup.object({
     phone: yup.string().min(8, 'Укажите телефон в международном формате')
-      .required('Password is required'),
+      .required('Обязательное поле'),
   });
 
   const formik = useFormik({
@@ -335,7 +352,7 @@ const App = () => {
               formik.setFieldValue('year', '');
             }}>
             <option value='' hidden>Выберите модификацию</option>
-            {formik.values.modifications.map(modification => (<option key={'mod_' + modification['complectation-id']} value={modification['complectation-id']}>{getModificationName(modification)}</option>))}
+            {formik.values.modifications.map(modification => (<option key={'mod_' + modification.id} value={modification.id}>{getModificationName(modification)}</option>))}
           </Select>
           <div className='bottompadded' />
           <Select
@@ -465,7 +482,7 @@ const App = () => {
           <div className='bottompadded' />
           <Divider align="left" className='bottompadded'><b>Место продажи</b></Divider>
           <Select
-            disabled={countries.length === 0 || formik.values.price === ''}
+            // disabled={countries.length === 0 || formik.values.price === ''}
             id='country'
             name='country'
             value={formik.values.country}
@@ -477,9 +494,10 @@ const App = () => {
               formik.setFieldValue('city', '');
             }}>
             <option value='' hidden>Страна</option>
-            {countries.map(cntr => (<option key={'cntr_' + cntr.id} value={cntr.id}>{cntr.name}</option>))}
+            {countries.map(cntr => (<option key={'cntr_' + cntr.code} value={cntr.code}>{cntr.name}</option>))}
           </Select>
           <div className='bottompadded' />
+
           <Select
             disabled={formik.values.cities.length === 0 || formik.values.country === ''}
             id='city'

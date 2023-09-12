@@ -111,6 +111,15 @@ export const getGenerationYears = (generations, selectedGeneration) => {
         console.log(error);
     }
 };
+// geo api
+export const getCountries = async () => {
+    try {
+        const resp = await fetch(`https://localhost:7007/api/v1.0/Geo/countries`);
+        return safeGetData(resp.json());
+    } catch (error) {
+        console.log(error)
+    }
+};
 
 export const isObjectEmpty = (objectName) => {
     return Object.keys(objectName).length === 0
