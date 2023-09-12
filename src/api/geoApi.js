@@ -1,12 +1,3 @@
-// мок асинхронный
-export const getCountries = () => {
-    return new Promise((resolve) => {
-        resolve([
-            { id: 0, name: "Россия", nameLat: "Russia" },
-            { id: 1, name: "Казахстан", nameLat: "Kazakhstan" }
-        ]);
-    });
-};
 export const getCities = (countryId) => {
     return new Promise((resolve) => {
         const cities = [
