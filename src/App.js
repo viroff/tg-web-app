@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from 'react';
+import useDebounce from './hooks/use-debounce';
 import classnames from 'classnames';
 import * as yup from 'yup';
 import { Formik, useFormik, Field } from 'formik';
@@ -51,7 +52,10 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [images, setImages] = useState([]);
+  const [searchTerm, setSearchTerm] = useState({});
   const [citySuggestions, setCitySuggestions] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const [tgApp, setTg] = useState(window.Telegram.WebApp);  // tg init
 
 
@@ -103,7 +107,29 @@ const App = () => {
     };
     getCurrenciesInternal();
   }, []);
-///////////////////////////////////////sgss test start////////////////////////////////////
+
+  const getCitySuggestions = async (str, countryCode) => {
+    console.log(str, countryCode);
+  }
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // Здесь происходит вызов АПИ
+  // Мы используем useEffect, так как это асинхронное действие
+  useEffect(
+    () => {
+      if (debouncedSearchTerm) {
+        setIsSearching(true);
+        getCitySuggestions(debouncedSearchTerm).then(results => {
+          setIsSearching(false);
+          setCitySuggestions(citySuggestions);
+        });
+      } else {
+        setCitySuggestions([]);
+      }
+    },
+    [debouncedSearchTerm]
+  );
+  ///////////////////////////////////////sgss test start////////////////////////////////////
   // const onChange = (newText) => {
   //   if (!newText || newText.trim() === "") {
   //     setCitySuggestions(undefined);
@@ -118,7 +144,7 @@ const App = () => {
   // const onSuggestionClicked = (suggestion) => {
   //   alert(typeof suggestion === "string" ? suggestion : suggestion.getSearchText());
   // };
-///////////////////////////////////////sgss test end////////////////////////////////////
+  ///////////////////////////////////////sgss test end////////////////////////////////////
   const submitPoster = async (values) => {
     const { city,
       condition,
@@ -489,17 +515,30 @@ const App = () => {
             onChange={async e => {
               const { value } = e.target;
               formik.setFieldValue('country', value);
-              const cities = await getCities(value);
-              formik.setFieldValue('cities', cities);
               formik.setFieldValue('city', '');
             }}>
             <option value='' hidden>Страна</option>
             {countries.map(cntr => (<option key={'cntr_' + cntr.code} value={cntr.code}>{cntr.name}</option>))}
           </Select>
           <div className='bottompadded' />
-
-          <Select
-            disabled={formik.values.cities.length === 0 || formik.values.country === ''}
+          <Input
+            className='fullwidth'
+            disabled={formik.values.country === ''}
+            id='citysuggestions'
+            name='citysuggestions'
+            value={formik.values.city}
+            placeholder='Укажите город'
+            onChange={e => {
+              const country = formik.values.country;
+              setSearchTerm({ str: e.target.value, country })
+              formik.setFieldValue('city', e.target.value);
+            }}
+          />
+          {citySuggestions.map(result => (
+            <div key={result.id}></div>
+          ))}
+          {/* <Select
+            //disabled={formik.values.cities.length === 0 || formik.values.country === ''}
             id='city'
             name='city'
             value={formik.values.city}
@@ -509,7 +548,7 @@ const App = () => {
             }}>
             <option value='' hidden>Город</option>
             {formik.values.cities.map(city => (<option key={'city_' + city.id} value={city.id}>{city.name}</option>))}
-          </Select>
+          </Select> */}
           <div className='bottompadded' />
           <Divider align="left" className='bottompadded'><b>Контактная информация</b></Divider>
           <Input
