@@ -523,7 +523,7 @@ const App = () => {
           <div className='bottompadded' />
           <Input
             className='fullwidth'
-            disabled={formik.values.country === ''}
+            //disabled={formik.values.country === ''}
             id='citysuggestions'
             name='citysuggestions'
             value={formik.values.city}
