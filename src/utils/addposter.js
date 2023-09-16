@@ -121,6 +121,32 @@ export const getCountries = async () => {
     }
 };
 
+export const getCitySuggestions = async ({ query, countryCode }) => {
+    try {
+        if (!query || query.length <= 3 || !countryCode || countryCode === '') {
+            return [];
+        }
+        const requestObj = {
+            query,
+            "countryCodes": [
+                countryCode
+            ]
+        };
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestObj),
+        }
+        const resp = await fetch(`https://localhost:7007/api/v1.0/Geo/suggestions`, requestOptions);
+        return safeGetData(resp.json());
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+};
+
 export const isObjectEmpty = (objectName) => {
     return Object.keys(objectName).length === 0
 }

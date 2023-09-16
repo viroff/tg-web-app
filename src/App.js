@@ -23,7 +23,8 @@ import {
   getGenerationYears,
   isObjectEmpty,
   getOptionText,
-  getCountries
+  getCountries,
+  getCitySuggestions
 } from './utils/addposter';
 
 import {
@@ -108,27 +109,29 @@ const App = () => {
     getCurrenciesInternal();
   }, []);
 
-  const getCitySuggestions = async (str, countryCode) => {
-    console.log(str, countryCode);
-  }
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  // Здесь происходит вызов АПИ
-  // Мы используем useEffect, так как это асинхронное действие
-  useEffect(
-    () => {
+  useEffect(() => {
+    const getCitySuggestionsInternal = async () => {
       if (debouncedSearchTerm) {
         setIsSearching(true);
-        getCitySuggestions(debouncedSearchTerm).then(results => {
+        await getCitySuggestions({ query: debouncedSearchTerm, countryCode: formik.values.country }).then(citySugs => {
           setIsSearching(false);
-          setCitySuggestions(citySuggestions);
+          setCitySuggestions(citySugs);
         });
       } else {
         setCitySuggestions([]);
       }
-    },
-    [debouncedSearchTerm]
-  );
+    };
+    getCitySuggestionsInternal();
+  }, [debouncedSearchTerm]);
+
+  const renderCitySuggestionsList = () => {
+    return (<datalist>
+      {citySuggestions.map(s => (<option key={'sgs_op_' + s.city}>{s.city}</option>))}
+    </datalist>);
+  };
+  //<option>{s.City}</option>
   ///////////////////////////////////////sgss test start////////////////////////////////////
   // const onChange = (newText) => {
   //   if (!newText || newText.trim() === "") {
@@ -524,19 +527,18 @@ const App = () => {
           <Input
             className='fullwidth'
             //disabled={formik.values.country === ''}
+            list='citysuggestionsList'
             id='citysuggestions'
             name='citysuggestions'
             value={formik.values.city}
             placeholder='Укажите город'
             onChange={e => {
               const country = formik.values.country;
-              setSearchTerm({ str: e.target.value, country })
+              setSearchTerm(e.target.value)
               formik.setFieldValue('city', e.target.value);
             }}
           />
-          {citySuggestions.map(result => (
-            <div key={result.id}></div>
-          ))}
+          {citySuggestions.length > 0 && renderCitySuggestionsList()}
           {/* <Select
             //disabled={formik.values.cities.length === 0 || formik.values.country === ''}
             id='city'
